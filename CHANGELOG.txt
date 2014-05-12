@@ -1,5 +1,7 @@
 Search API Solr search 1.x, dev (xx/xx/xxxx):
 ---------------------------------------------
+- #2216895 by das-peter: Added support for empty/non-empty conditions on
+  location field types.
 - #2162627 by drunken monkey: Removed Solr 1.4 support.
 - #2175829 by danquah, drunken monkey: Fixed error when admin interface is not
   accessible.
