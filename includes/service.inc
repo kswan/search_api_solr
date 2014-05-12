@@ -1497,7 +1497,6 @@ class SearchApiSolrService extends SearchApiAbstractService {
       // Empty / non-empty comparison has to take place in one of the subfields
       // of the location field type. These subfields are usually generated with
       // the index and the field type as name suffix.
-      // @TODO Does this work for solr3?
       // @TODO Do we need to handle other operators / values too?
       if ($value === NULL) {
         $field .= '_0___tdouble';
