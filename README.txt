@@ -59,8 +59,7 @@ Regarding third-party features, the following are supported:
 - search_api_data_type_location
   Introduced by module: search_api_location
   Lets you index, filter and sort on location fields. Note, however, that only
-  single-valued fields are currently supported for Solr 3.x, and that the option
-  isn't supported at all in Solr 1.4.
+  single-valued fields are currently supported for Solr 3.x.
 - search_api_grouping
   Introduced by module: search_api_grouping [5]
   Lets you group search results based on indexed fields. For further information
