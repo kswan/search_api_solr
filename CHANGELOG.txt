@@ -1,5 +1,7 @@
 Search API Solr search 1.x, dev (xx/xx/xxxx):
 ---------------------------------------------
+- #2270767 by RaF: Fixed search_api_solr_views_data_alter() not always
+  returning all virtual fields.
 
 Search API Solr search 1.5 (05/23/2014):
 ----------------------------------------
