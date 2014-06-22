@@ -161,7 +161,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
     $form['path'] = array(
       '#type' => 'textfield',
       '#title' => t('Solr path'),
-      '#description' => t('The path that identifies the Solr instance to use on the server.'),
+      '#description' => t('The path that identifies the Solr instance to use on the server. (For Solr 4.x servers, this should include the name of the core to use.)'),
       '#default_value' => $options['path'],
     );
 

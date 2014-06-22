@@ -1,5 +1,7 @@
 Search API Solr search 1.x, dev (xx/xx/xxxx):
 ---------------------------------------------
+- #2083357 by drunken monkey: Added note that Solr 4.x server paths should be
+  specified with core.
 - #2270767 by RaF: Fixed search_api_solr_views_data_alter() not always
   returning all virtual fields.
 
