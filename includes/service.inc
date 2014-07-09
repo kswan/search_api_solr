@@ -1451,7 +1451,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
       }
       return '((' . implode(') OR (', $k) . '))';
     }
-    $k = implode($neg ? ' AND ' : ' ', $k);
+    $k = implode(' AND ', $k);
     return $neg ? "*:* AND -($k)" : $k;
   }
 
@@ -1471,7 +1471,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
           $fq[] = $this->createFilterQuery($solr_fields[$f[0]], $f[1], $f[2], $fields[$f[0]]);
         }
       }
-      else {
+      elseif ($f instanceof SearchApiQueryFilterInterface) {
         $q = $this->createFilterQueries($f, $solr_fields, $fields);
         if ($filter->getConjunction() != $f->getConjunction()) {
           // $or == TRUE means the nested filter has conjunction AND, and vice versa
@@ -1481,6 +1481,16 @@ class SearchApiSolrService extends SearchApiAbstractService {
         else {
           $fq = array_merge($fq, $q);
         }
+      }
+    }
+    if (method_exists($filter, 'getTags')) {
+      foreach ($filter->getTags() as $tag) {
+        $tag = "{!tag=$tag}";
+        foreach ($fq as $i => $filter) {
+          $fq[$i] = $tag . $filter;
+        }
+        // We can only apply one tag per filter.
+        break;
       }
     }
     return ($or && count($fq) > 1) ? array('((' . implode(') OR (', $fq) . '))') : $fq;
@@ -1555,7 +1565,6 @@ class SearchApiSolrService extends SearchApiAbstractService {
     $facet_params['facet.limit'] = 10;
     $facet_params['facet.mincount'] = 1;
     $facet_params['facet.missing'] = 'false';
-    $taggedFields = array();
     foreach ($facets as $info) {
       if (empty($fields[$info['field']])) {
         continue;
@@ -1565,10 +1574,9 @@ class SearchApiSolrService extends SearchApiAbstractService {
       // Check for the "or" operator.
       if (isset($info['operator']) && $info['operator'] === 'or') {
         // Remember that filters for this field should be tagged.
-        $escaped = call_user_func(array($this->connection_class, 'escapeFieldName'), $fields[$info['field']]);
-        $taggedFields[$escaped] = "{!tag=$escaped}";
+        $tag = 'facet:' . $info['field'];
         // Add the facet field.
-        $facet_params['facet.field'][] = "{!ex=$escaped}$field";
+        $facet_params['facet.field'][] = "{!ex=$tag}$field";
       }
       else {
         // Add the facet field.
@@ -1585,20 +1593,6 @@ class SearchApiSolrService extends SearchApiAbstractService {
       // Set missing, if specified.
       if ($info['missing']) {
         $facet_params["f.$field.facet.missing"] = 'true';
-      }
-    }
-    // Tag filters of fields with "OR" facets.
-    foreach ($taggedFields as $field => $tag) {
-      $regex = '#(?<![^( ])' . preg_quote($field, '#') . ':#';
-      foreach ($fq as $i => $filter) {
-        // Solr can't handle two tags on the same filter, so we don't add two.
-        // Another option here would even be to remove the other tag, too,
-        // since we can be pretty sure that this filter does not originate from
-        // a facet – however, wrong results would still be possible, and this is
-        // definitely an edge case, so don't bother.
-        if (preg_match($regex, $filter) && substr($filter, 0, 6) != '{!tag=') {
-          $fq[$i] = $tag . $filter;
-        }
       }
     }
 
