@@ -1,5 +1,7 @@
 Search API Solr search 1.x, dev (xx/xx/xxxx):
 ---------------------------------------------
+- #2050961 by das-peter, drunken monkey: Added proximity/distance information
+  to search results.
 - #2242073 by RaF: Fixed handling of custom negative filters in filter-only
   searches.
 - #2290601 by drunken monkey: Fixed handling of complex keywords and OR facets.

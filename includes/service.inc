@@ -942,6 +942,19 @@ class SearchApiSolrService extends SearchApiAbstractService {
           }
         }
 
+        // Add parameters to fetch distance, if requested.
+        if (!empty($spatial['distance']) && $version >= 4) {
+          if (strpos($field, ':') === FALSE) {
+            // Add pseudofield with the distance to the result items.
+            $location_fields[] = '_' . $field . '_distance_:geodist(' . $field . ',' . $point . ')';
+          }
+          else {
+            $link = l(t('edit server'), 'admin/config/search/search_api/server/' . $this->server->machine_name . '/edit');
+            watchdog('search_api_solr', "Location distance information can't be added because unclean field identifiers are used.", array(), WATCHDOG_WARNING, $link);
+          }
+        }
+
+
         // Change the facet parameters for spatial fields to return distance
         // facets.
         if (!empty($facets)) {
@@ -1069,6 +1082,10 @@ class SearchApiSolrService extends SearchApiAbstractService {
     if (!empty($this->options['retrieve_data'])) {
       $params['fl'] = '*,score';
     }
+    if (!empty($location_fields)) {
+      $params['fl'] .= ',' . implode(',', $location_fields);
+    }
+
     // Retrieve http method from server options.
     $http_method = !empty($this->options['http_method']) ? $this->options['http_method'] : 'AUTO';
 
@@ -1138,6 +1155,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
     $index = $query->getIndex();
     $fields = $this->getFieldNames($index);
     $field_options = $index->options['fields'];
+    $version = $this->solr->getSolrVersion();
 
     // Set up the results array.
     $results = array();
@@ -1174,6 +1192,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
       $results['result count'] = $response->response->numFound;
       $docs = $response->response->docs;
     }
+    $spatials = $query->getOption('search_api_location');
 
     // Add each search result to the results array.
     foreach ($docs as $doc) {
@@ -1205,6 +1224,22 @@ class SearchApiSolrService extends SearchApiAbstractService {
       // SearchApiSolrService::getFieldNames().
       $result['id'] = $result['fields']['search_api_id'];
       $result['score'] = $result['fields']['search_api_relevance'];
+
+      // If location based search is enabled ensure the calculated distance is
+      // set to the appropriate field. If the calculation wasn't possible add
+      // the coordinates to allow calculation.
+      if ($spatials) {
+        foreach ($spatials as $spatial) {
+          if (isset($spatial['field']) && !empty($spatial['distance'])) {
+            if ($version >= 4) {
+              $doc_field = '_' . $fields[$spatial['field']] . '_distance_';
+              if (!empty($doc->{$doc_field})) {
+                $results['search_api_location'][$spatial['field']][$result['id']]['distance'] = $doc->{$doc_field};
+              }
+            }
+          }
+        }
+      }
 
       $index_id = $this->getIndexId($index->machine_name);
       $solr_id = $this->createId($index_id, $result['id']);
