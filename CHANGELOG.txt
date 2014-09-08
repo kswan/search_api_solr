@@ -1,5 +1,5 @@
-Search API Solr search 1.x, dev (xx/xx/xxxx):
----------------------------------------------
+Search API Solr search 1.6 (09/08/2014):
+----------------------------------------
 - #2050961 by das-peter, drunken monkey: Added proximity/distance information
   to search results.
 - #2242073 by RaF: Fixed handling of custom negative filters in filter-only
