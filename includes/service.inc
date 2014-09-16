@@ -1584,6 +1584,8 @@ class SearchApiSolrService extends SearchApiAbstractService {
         }
         $value = format_date($value, 'custom', self::SOLR_DATE_FORMAT, 'UTC');
         break;
+      case 'text':
+        return '(' . call_user_func(array($this->connection_class, 'escape'), $value) . ')';
     }
     return call_user_func(array($this->connection_class, 'phrase'), $value);
   }

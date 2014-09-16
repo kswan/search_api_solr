@@ -1,5 +1,6 @@
 Search API Solr search 1.x, dev (xx/xx/xxxx):
 ---------------------------------------------
+- #2333133 by drunken monkey: Fixed behavior of filters on fulltext fields.
 
 Search API Solr search 1.6 (09/08/2014):
 ----------------------------------------
