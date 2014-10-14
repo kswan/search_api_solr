@@ -1497,6 +1497,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
   protected function createFilterQueries(SearchApiQueryFilterInterface $filter, array $solr_fields, array $fields) {
     $or = $filter->getConjunction() == 'OR';
     $fq = array();
+    $prefix = '';
     foreach ($filter->getFilters() as $f) {
       if (is_array($f)) {
         if (!isset($fields[$f[0]])) {
@@ -1520,15 +1521,20 @@ class SearchApiSolrService extends SearchApiAbstractService {
     }
     if (method_exists($filter, 'getTags')) {
       foreach ($filter->getTags() as $tag) {
-        $tag = "{!tag=$tag}";
-        foreach ($fq as $i => $filter) {
-          $fq[$i] = $tag . $filter;
-        }
+        $prefix = "{!tag=$tag}";
         // We can only apply one tag per filter.
         break;
       }
     }
-    return ($or && count($fq) > 1) ? array('((' . implode(') OR (', $fq) . '))') : $fq;
+    if ($or && count($fq) > 1) {
+      $fq = array('((' . implode(') OR (', $fq) . '))');
+    }
+    if ($prefix) {
+      foreach ($fq as $i => $filter) {
+        $fq[$i] = $prefix . $filter;
+      }
+    }
+    return $fq;
   }
 
   /**
