@@ -1,5 +1,6 @@
 Search API Solr search 1.x, dev (xx/xx/xxxx):
 ---------------------------------------------
+- #1908990 by drunken monkey: Fixed various issues with excerpts.
 - #2368399 by das-peter, drunken monkey: Added Support for location filtering
   with a bounding box.
 - #2333133 by drunken monkey: Fixed behavior of filters on fulltext fields.
