@@ -884,13 +884,31 @@ class SearchApiSolrService extends SearchApiAbstractService {
     // Handle spatial filters.
     if ($spatials = $query->getOption('search_api_location')) {
       foreach ($spatials as $i => $spatial) {
-        if (empty($spatial['field']) || empty($spatial['lat']) || empty($spatial['lon'])) {
+        // Spatial options all need a field to do anything.
+        if (!isset($spatial['field'])) {
           continue;
         }
 
         unset($radius);
         $field = $fields[$spatial['field']];
         $escaped_field = SearchApiSolrConnection::escapeFieldName($field);
+
+        // If proper bbox coordinates were given use them to filter.
+        if (isset($spatial['bbox'])) {
+          if ($version >= 4) {
+            $bbox = $spatial['bbox'];
+            $fq[] = $escaped_field . ':[' . (float) $bbox['bottom'] . ',' . (float) $bbox['left'] . ' TO ' . (float) $bbox['top'] . ',' . (float) $bbox['right'] . ']';
+          }
+          else {
+            $warnings[] = t('Filtering by a bounding box is not supported in Solr versions below 4.');
+          }
+        }
+
+        // Everything other than a bounding box filter requires a point, so stop
+        // here (for this option) if "lat" and "lon" aren't both set.
+        if (!isset($spatial['lat']) || !isset($spatial['lon'])) {
+          continue;
+        }
         $point = ((float) $spatial['lat']) . ',' . ((float) $spatial['lon']);
 
         // Prepare the filter settings.
