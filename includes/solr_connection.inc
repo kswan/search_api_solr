@@ -635,7 +635,7 @@ class SearchApiSolrConnection implements SearchApiSolrConnectionInterface {
   public static function escape($value, $version = 0) {
     $replacements = array();
 
-    $specials = array('+', '-', '&&', '||', '!', '(', ')', '{', '}', '[', ']', '^', '"', '~', '*', '?', ':', "\\");
+    $specials = array('+', '-', '&&', '||', '!', '(', ')', '{', '}', '[', ']', '^', '"', '~', '*', '?', ':', "\\", 'AND', 'OR', 'NOT');
     // Solr 4.x introduces regular expressions, making the slash also a special
     // character.
     if ($version >= 4) {
