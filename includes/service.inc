@@ -2030,8 +2030,10 @@ class SearchApiSolrService extends SearchApiAbstractService {
 
     // Restrict search to searched indexes.
     $index_filter = array();
+    $indexes = array();
     foreach ($query->getIndexes() as $index) {
       $index_id = $this->getIndexId($index->machine_name);
+      $indexes[$index_id] = $index;
       $index_filter[] = 'index_id:' . call_user_func(array($this->connection_class, 'phrase'), $index_id);
     }
     $fq[] = implode(' OR ', $index_filter);
@@ -2086,6 +2088,9 @@ class SearchApiSolrService extends SearchApiAbstractService {
     if (!empty($highlight_params)) {
       $params += $highlight_params;
     }
+    if (!empty($this->options['retrieve_data'])) {
+      $params['fl'] = '*,score';
+    }
 
     // Retrieve http method from server options.
     $http_method = !empty($this->options['http_method']) ? $this->options['http_method'] : 'AUTO';
@@ -2110,16 +2115,44 @@ class SearchApiSolrService extends SearchApiAbstractService {
     $results['results'] = array();
     $tmp = array();
     foreach ($response->response->docs as $id => $doc) {
+      if (isset($indexes[$doc->index_id])) {
+        $index = $indexes[$doc->index_id];
+      }
+      else {
+        $index = new SearchApiIndex(array('machine_name' => $doc->index_id));
+      }
+      $fields = $this->getFieldNames($index);
+      $field_options = $index->options['fields'];
       $result = array(
-        'id' => $doc->item_id,
+        'id' => NULL,
         'index_id' => $doc->index_id,
-        'score' => $doc->score,
+        'score' => NULL,
+        'fields' => array(),
       );
-      $solr_id = $this->createId($doc->index_id, $result['id']);
-      $excerpt = $this->getExcerpt($response, $solr_id, $tmp, array());
+      $solr_id = $this->createId($doc->index_id, $doc->item_id);
+      foreach ($fields as $search_api_property => $solr_property) {
+        if (isset($doc->{$solr_property})) {
+          $result['fields'][$search_api_property] = $doc->{$solr_property};
+          // Date fields need some special treatment to become valid date values
+          // (i.e., timestamps) again.
+          if (isset($field_options[$search_api_property]['type'])
+              && $field_options[$search_api_property]['type'] == 'date'
+              && preg_match('/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/', $result['fields'][$search_api_property])) {
+            $result['fields'][$search_api_property] = strtotime($result['fields'][$search_api_property]);
+          }
+        }
+      }
+
+      $excerpt = $this->getExcerpt($response, $solr_id, $result['fields'], $fields);
       if ($excerpt) {
         $result['excerpt'] = $excerpt;
       }
+
+      // We can find the item id and score in the special 'search_api_*'
+      // properties. Mappings are provided for these properties in
+      // SearchApiSolrService::getFieldNames().
+      $result['id'] = $result['fields']['search_api_id'];
+      $result['score'] = $result['fields']['search_api_relevance'];
       $results['results'][$id] = $result;
     }
 
