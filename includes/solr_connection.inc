@@ -720,7 +720,7 @@ class SearchApiSolrConnection implements SearchApiSolrConnectionInterface {
   /**
    * Implements SearchApiSolrConnectionInterface::update().
    */
-  public function update($rawPost, $timeout = FALSE) {
+  public function update($rawPost, $timeout = 3600) {
     if (empty($this->update_url)) {
       // Store the URL in an instance variable since many updates may be sent
       // via a single instance of this class.

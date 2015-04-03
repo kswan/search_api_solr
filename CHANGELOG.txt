@@ -1,5 +1,6 @@
 Search API Solr search 1.x, dev (xx/xx/xxxx):
 ---------------------------------------------
+- #2451037 by drunken monkey: Fixed timeout errors during indexing.
 - #2054551 by paolomainardi, drunken monkey, lex0r: Added possibility to
   retrieve Solr field values in multi-index searches.
 - #1908990 by drunken monkey: Fixed various issues with excerpts.
