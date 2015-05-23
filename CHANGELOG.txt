@@ -1,5 +1,7 @@
 Search API Solr search 1.x, dev (xx/xx/xxxx):
 ---------------------------------------------
+- #2456159 by drunken monkey: Updated config files to their latest version from
+  the common configs.
 - #2442077 by drunken monkey, basvredeling: Added support for Solr 5.
 - #2451037 by drunken monkey: Fixed timeout errors during indexing.
 - #2054551 by paolomainardi, drunken monkey, lex0r: Added possibility to
