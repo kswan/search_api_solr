@@ -1,5 +1,6 @@
 Search API Solr search 1.x, dev (xx/xx/xxxx):
 ---------------------------------------------
+- #2486533 by drunken monkey: Fixed default operator in Solr 5.
 - #2456159 by drunken monkey: Updated config files to their latest version from
   the common configs.
 - #2442077 by drunken monkey, basvredeling: Added support for Solr 5.
