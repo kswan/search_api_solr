@@ -1,5 +1,7 @@
 Search API Solr search 1.x, dev (xx/xx/xxxx):
 ---------------------------------------------
+- #2441117 by drunken monkey: Fixed unnecessary reindexing after changing
+  fields' boosts.
 
 Search API Solr search 1.7 (2015-06-08):
 ----------------------------------------

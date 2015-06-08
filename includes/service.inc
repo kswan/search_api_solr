@@ -509,7 +509,18 @@ class SearchApiSolrService extends SearchApiAbstractService {
     if (module_exists('search_api_multi') && module_exists('search_api_views')) {
       views_invalidate_cache();
     }
-    return TRUE;
+    // Find out if anything changed enough to need re-indexing.
+    $old_fields = isset($index->original->options['fields']) ? $index->original->options['fields'] : array();
+    $new_fields = isset($index->options['fields']) ? $index->options['fields'] : array();
+    if (!$old_fields && !$new_fields) {
+      return FALSE;
+    }
+    if (array_diff_key($old_fields, $new_fields) || array_diff_key($new_fields, $old_fields)) {
+      return TRUE;
+    }
+    $old_field_names = $this->getFieldNames($index->original, TRUE);
+    $new_field_names = $this->getFieldNames($index, TRUE);
+    return $old_field_names != $new_field_names;
   }
 
   /**
