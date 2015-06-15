@@ -530,22 +530,8 @@ class SearchApiSolrService extends SearchApiAbstractService {
     if (module_exists('search_api_multi') && module_exists('search_api_views')) {
       views_invalidate_cache();
     }
-    $index_id = is_object($index) ? $index->machine_name : $index;
-    // Only delete the index's data if the index isn't read-only.
-    if (!is_object($index) || empty($index->read_only)) {
-      $this->connect();
-      $index_id = $this->getIndexId($index_id);
-      // Since the index ID we use for indexing can contain arbitrary
-      // prefixes, we have to escape it for use in the query.
-      $index_id = call_user_func(array($this->connection_class, 'phrase'), $index_id);
-      $query = "index_id:$index_id";
-      if (!empty($this->options['site_hash'])) {
-        // We don't need to escape the site hash, as that consists only of
-        // alphanumeric characters.
-        $query .= ' hash:' . search_api_solr_site_hash();
-      }
-      $this->solr->deleteByQuery($query);
-    }
+
+    parent::removeIndex($index);
   }
 
   /**
@@ -810,7 +796,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
       if ($ids != 'all') {
         $query[] = $query ? "($ids)" : $ids;
       }
-      $this->solr->deleteByQuery($query ? implode(' ', $query) : '*:*');
+      $this->solr->deleteByQuery($query ? implode(' AND ', $query) : '*:*');
     }
     $this->scheduleCommit();
   }
