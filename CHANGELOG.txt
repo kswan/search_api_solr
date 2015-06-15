@@ -1,5 +1,6 @@
 Search API Solr Search 1.x, dev (xx/xx/xxxx):
 ---------------------------------------------
+- #2463523 by bmunslow: Fixed field boosts in multi-index searches.
 
 Search API Solr Search 1.8 (2015-06-15):
 ----------------------------------------

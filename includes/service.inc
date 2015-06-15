@@ -2018,7 +2018,8 @@ class SearchApiSolrService extends SearchApiAbstractService {
     $search_fields = $query->getFields();
     $qf = array();
     foreach ($search_fields as $f) {
-      $qf[] = $solr_fields[$f];
+      $boost = isset($fields[$f]['boost']) ? '^' . $fields[$f]['boost'] : '';
+      $qf[] = $solr_fields[$f] . $boost;
     }
 
     // Extract filters
