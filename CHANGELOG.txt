@@ -1,5 +1,5 @@
-Search API Solr search 1.x, dev (xx/xx/xxxx):
----------------------------------------------
+Search API Solr search 1.8 (2015-06-15):
+----------------------------------------
 - #2502511 by drunken monkey: Fixed index removal on Solr 5.
 - #2441117 by drunken monkey: Fixed unnecessary reindexing after changing
   fields' boosts.
