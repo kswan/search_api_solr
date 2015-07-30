@@ -1,5 +1,7 @@
 Search API Solr Search 1.x, dev (xx/xx/xxxx):
 ---------------------------------------------
+- #1918904 by arnested, ramlev, drunken monkey: Added an alter hook for
+  autocomplete suggestions.
 - #2532812 by drunken monkey: Improved performance for filter-only queries.
 - #2463523 by bmunslow: Fixed field boosts in multi-index searches.
 

@@ -1864,6 +1864,14 @@ class SearchApiSolrService extends SearchApiAbstractService {
       $this->setRequestHandler($this->request_handler, $call_args);
     }
     $second_pass = !isset($this->options['autocorrect_suggest_words']) || $this->options['autocorrect_suggest_words'];
+
+    $alter_data = array(
+      'search' => $search,
+      'query' => $query,
+      'incomplete_key' => $incomplete_key,
+      'user_input' => $user_input,
+    );
+
     for ($i = 0; $i < ($second_pass ? 2 : 1); ++$i) {
       try {
         // Send search request
@@ -1871,6 +1879,8 @@ class SearchApiSolrService extends SearchApiAbstractService {
         drupal_alter('search_api_solr_query', $call_args, $query);
         $this->preQuery($call_args, $query);
         $response = $this->solr->search($keys, $params, $http_method);
+
+        $alter_data['responses'][] = $response;
 
         if (!empty($response->spellcheck->suggestions)) {
           $replace = array();
@@ -1960,8 +1970,10 @@ class SearchApiSolrService extends SearchApiAbstractService {
       }
       // Change parameters for second query.
       unset($params['facet.prefix']);
-      $keys = trim ($keys . ' ' . $incomplete_key);
+      $keys = trim($keys . ' ' . $incomplete_key);
     }
+
+    drupal_alter('search_api_solr_autocomplete_suggestions', $suggestions, $alter_data);
 
     return $suggestions;
   }
