@@ -222,9 +222,9 @@ class SearchApiSolrService extends SearchApiAbstractService {
       '#description' => t('Specify the Solr version manually in case it cannot be retrived automatically. The version can be found in the Solr admin interface under "Solr Specification Version" or "solr-spec"'),
       '#options' => array(
         '' => t('Determine automatically'),
-        '1' => '1.4',
         '3' => '3.x',
         '4' => '4.x',
+        '5' => '5.x',
       ),
       '#default_value' => $options['solr_version'],
     );
