@@ -1,5 +1,6 @@
 Search API Solr Search 1.x, dev (xx/xx/xxxx):
 ---------------------------------------------
+- #2486533 by drunken monkey: Fixed the default operator in the Solr 5 configs.
 - #2466897 by drunken monkey: Fixed Solr version options in server settings.
 - #1918904 by arnested, ramlev, drunken monkey: Added an alter hook for
   autocomplete suggestions.
