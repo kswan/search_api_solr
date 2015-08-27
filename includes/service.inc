@@ -321,6 +321,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
       'search_api_spellcheck',
       'search_api_data_type_location',
       'search_api_data_type_geohash',
+      'search_api_random_sort',
     ));
     if (isset($supported[$feature])) {
       return TRUE;
@@ -643,6 +644,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
       $ret = array(
         'search_api_id' => 'item_id',
         'search_api_relevance' => 'score',
+        'search_api_random' => 'random',
       );
 
       // Add the names of any fields configured on the index.
@@ -851,6 +853,17 @@ class SearchApiSolrService extends SearchApiAbstractService {
       if (substr($f, 0, 3) == 'ss_') {
         $f = 'sort_' . substr($f, 3);
       }
+
+      // The default Solr schema provides a virtual field named "random_SEED"
+      // that can be used to randomly sort the results; the field is available
+      // only at query-time.
+      if ($field == 'search_api_random') {
+        $params = $query->getOption('search_api_random_sort', array());
+        // Random seed: getting the value from parameters or computing a new one.
+        $seed = !empty($params['seed']) ? $params['seed'] : mt_rand();
+        $f = 'random_' . $seed;
+      }
+
       $order = strtolower($order);
       $sort[$field] = "$f $order";
     }
