@@ -392,7 +392,7 @@ class SearchApiSolrConnection implements SearchApiSolrConnectionInterface {
     $system_info = $this->getSystemInfo();
     // Get our solr version number
     if (isset($system_info->lucene->{'solr-spec-version'})) {
-      return $system_info->lucene->{'solr-spec-version'}[0];
+      return (int) $system_info->lucene->{'solr-spec-version'};
     }
     return 0;
   }

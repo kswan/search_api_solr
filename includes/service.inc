@@ -868,11 +868,16 @@ class SearchApiSolrService extends SearchApiAbstractService {
       $mlt_params['qt'] = 'mlt';
       // The fields to look for similarities in.
       $mlt_fl = array();
+      // Solr 4 (before 4.6) has a bug which results in numeric fields not being
+      // supported in MLT queries.
+      $mlt_no_numeric_fields = FALSE;
+      if ($version == 4) {
+        $system_info = $this->solr->getSystemInfo();
+        $mlt_no_numeric_fields = !isset($system_info->lucene->{'solr-spec-version'}) || version_compare($system_info->lucene->{'solr-spec-version'}, '4.6.0', '<');
+      }
       foreach($mlt['fields'] as $f) {
-        // Solr 4 has a bug which results in numeric fields not being supported
-        // in MLT queries.
         // Date fields don't seem to be supported at all.
-        if ($fields[$f][0] === 'd' || ($version == 4 && in_array($fields[$f][0], array('i', 'f')))) {
+        if ($fields[$f][0] === 'd' || ($mlt_no_numeric_fields && in_array($fields[$f][0], array('i', 'f')))) {
           continue;
         }
         $mlt_fl[] = $fields[$f];
@@ -885,6 +890,10 @@ class SearchApiSolrService extends SearchApiAbstractService {
       $id = $this->createId($index_id, $mlt['id']);
       $id = call_user_func(array($this->connection_class, 'phrase'), $id);
       $keys = 'id:' . $id;
+      // In (early versions of) Solr 5, facets aren't supported with MLT.
+      if ($version >= 5) {
+        $facet_params = array();
+      }
     }
 
     // Handle spatial filters.
