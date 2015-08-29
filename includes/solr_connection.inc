@@ -603,6 +603,7 @@ class SearchApiSolrConnection implements SearchApiSolrConnectionInterface {
 
     $result = drupal_http_request($url, $options);
 
+    $result->status_message = isset($result->status_message) ? $result->status_message : '';
     if (!isset($result->code) || $result->code < 0) {
       $result->code = 0;
       $result->status_message = 'Request failed';
