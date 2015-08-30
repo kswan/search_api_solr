@@ -1,5 +1,5 @@
-Search API Solr Search 1.x, dev (xx/xx/xxxx):
----------------------------------------------
+Search API Solr Search 1.9 (2015-08-30):
+----------------------------------------
 - #2503829 by das-peter: Added support for grouping on "magic" fields.
 - #2503617 by tobiasb: Fixed undefined "status_message" property in HTTP
   response object.
