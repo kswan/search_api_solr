@@ -429,8 +429,8 @@ class SearchApiSolrService extends SearchApiAbstractService {
                 $status = 'error';
               }
               elseif (substr($stats_summary['@schema_version'], 0, 9) != 'drupal-4.') {
-                $variables['@url'] = url(drupal_get_path('module', 'search_api_solr') . '/INSTALL.txt');
-                $message = t('You are using an incompatible schema.xml configuration file. Please follow the instructions in the <a href="@url">INSTALL.txt</a> file for setting up Solr.', $variables);
+                $variables['@url'] = url('https://www.drupal.org/node/1999310');
+                $message = t('You are using an incompatible schema.xml configuration file. Please follow the instructions in <a href="@url">the handbook</a> for setting up Solr.', $variables);
                 drupal_set_message($message, 'error');
                 $status = 'error';
               }

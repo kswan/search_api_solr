@@ -1,5 +1,6 @@
 Search API Solr Search 1.x, dev (xx/xx/xxxx):
 ---------------------------------------------
+- #2551763 by drunken monkey: Fixed mention of INSTALL.txt in an error message.
 
 Search API Solr Search 1.9 (2015-08-30):
 ----------------------------------------
