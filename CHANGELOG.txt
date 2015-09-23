@@ -1,5 +1,6 @@
 Search API Solr Search 1.x, dev (xx/xx/xxxx):
 ---------------------------------------------
+- #2513314 by fortis, drunken monkey: Fixed error for empty filters.
 - #2551763 by drunken monkey: Fixed mention of INSTALL.txt in an error message.
 
 Search API Solr Search 1.9 (2015-08-30):
