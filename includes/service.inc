@@ -1080,6 +1080,18 @@ class SearchApiSolrService extends SearchApiAbstractService {
               if (substr($f, 0, 3) == 'ss_') {
                 $f = 'sort_' . substr($f, 3);
               }
+
+              // The default Solr schema provides a virtual field named
+              // "random_SEED" that can be used to randomly sort the results;
+              // the field is available only at query-time.
+              if ($group_sort_field == 'search_api_random') {
+                $params = $query->getOption('search_api_random_sort', array());
+                // Random seed: getting the value from parameters or computing a
+                // new one.
+                $seed = !empty($params['seed']) ? $params['seed'] : mt_rand();
+                $f = 'random_' . $seed;
+              }
+
               $order = strtolower($order);
               $group_params['group.sort'][] = $f . ' ' . $order;
             }
