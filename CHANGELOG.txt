@@ -1,5 +1,7 @@
 Search API Solr Search 1.x, dev (xx/xx/xxxx):
 ---------------------------------------------
+- #2598288 by ethan.han777, JeroenT, drunken monkey: Fixed potential notices in
+  the spellchecker code.
 - #2564927 by thePanz: Added support for random sorting in grouped searches.
 - #2527528 by maximpodorov, drunken monkey: Fixed searching of string fields
   with leading/trailing spaces.
