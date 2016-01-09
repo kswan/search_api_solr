@@ -1348,8 +1348,10 @@ class SearchApiSolrService extends SearchApiAbstractService {
       }
     }
     if (!empty($this->options['highlight_data'])) {
+      $prefix = variable_get('search_api_solr_highlight_prefix', 'tm_');
+      $prefix_length = strlen($prefix);
       foreach ($field_mapping as $search_api_property => $solr_property) {
-        if (substr($solr_property, 0, 3) == 'tm_' && !empty($response->highlighting->$id->$solr_property)) {
+        if (substr($solr_property, 0, $prefix_length) == $prefix && !empty($response->highlighting->$id->$solr_property)) {
           // Contrary to above, we here want to preserve HTML, so we just
           // replace the [HIGHLIGHT] tags with the appropriate format.
           $fields[$search_api_property] = $this->formatHighlighting($response->highlighting->$id->$solr_property);
@@ -1728,7 +1730,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
     }
 
     if (!empty($this->options['highlight_data'])) {
-      $highlight_params['hl.fl'] = 'tm_*';
+      $highlight_params['hl.fl'] = variable_get('search_api_solr_highlight_prefix', 'tm_') . '*';
       $highlight_params['hl.snippets'] = 1;
       $highlight_params['hl.fragsize'] = 0;
       if (!empty($this->options['excerpt'])) {
