@@ -57,7 +57,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
   protected $request_handler = NULL;
 
   /**
-   * Overrides SearchApiAbstractService::configurationForm().
+   * {@inheritdoc}
    */
   public function configurationForm(array $form, array &$form_state) {
     if ($this->options) {
@@ -271,7 +271,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
   }
 
   /**
-   * Overrides SearchApiAbstractService::configurationFormValidate().
+   * {@inheritdoc}
    */
   public function configurationFormValidate(array $form, array &$values, array &$form_state) {
     if (isset($values['port']) && (!is_numeric($values['port']) || $values['port'] < 0 || $values['port'] > 65535)) {
@@ -280,7 +280,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
   }
 
   /**
-   * Overrides SearchApiAbstractService::configurationFormSubmit().
+   * {@inheritdoc}
    */
   public function configurationFormSubmit(array $form, array &$values, array &$form_state) {
     // Since the form is nested into another, we can't simply use #parents for
@@ -495,7 +495,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
   }
 
   /**
-   * Overrides SearchApiAbstractService::addIndex().
+   * {@inheritdoc}
    */
   public function addIndex(SearchApiIndex $index) {
     if (module_exists('search_api_multi') && module_exists('search_api_views')) {
@@ -504,7 +504,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
   }
 
   /**
-   * Overrides SearchApiAbstractService::fieldsUpdated().
+   * {@inheritdoc}
    */
   public function fieldsUpdated(SearchApiIndex $index) {
     if (module_exists('search_api_multi') && module_exists('search_api_views')) {
@@ -525,7 +525,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
   }
 
   /**
-   * Overrides SearchApiAbstractService::removeIndex().
+   * {@inheritdoc}
    */
   public function removeIndex($index) {
     if (module_exists('search_api_multi') && module_exists('search_api_views')) {
@@ -536,7 +536,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
   }
 
   /**
-   * Implements SearchApiServiceInterface::indexItems().
+   * {@inheritdoc}
    */
   public function indexItems(SearchApiIndex $index, array $items) {
     $documents = array();
@@ -772,6 +772,17 @@ class SearchApiSolrService extends SearchApiAbstractService {
    *
    * It is up to the caller to ensure $ids is a valid query when the method is
    * called in this fashion.
+   *
+   * @param array|string $ids
+   *   Either an array containing the ids of the items that should be deleted,
+   *   or 'all' if all items should be deleted. Other formats might be
+   *   recognized by implementing classes, but these are not standardized.
+   * @param SearchApiIndex $index
+   *   The index from which items should be deleted, or NULL if all indexes on
+   *   this server should be cleared (then, $ids has to be 'all').
+   *
+   * @throws SearchApiException
+   *   If an error occurred while trying to delete the items.
    */
   public function deleteItems($ids = 'all', SearchApiIndex $index = NULL) {
     $this->connect();
@@ -804,7 +815,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
   }
 
   /**
-   * Implements SearchApiServiceInterface::search().
+   * {@inheritdoc}
    */
   public function search(SearchApiQueryInterface $query) {
     $time_method_called = microtime(TRUE);

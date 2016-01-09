@@ -1,5 +1,7 @@
 Search API Solr Search 1.x, dev (xxxx-xx-xx):
 ---------------------------------------------
+- #2611716 by aditya_anurag, drunken monkey: Improved the method documentation
+  comments.
 - #2599658 by Loparev, drunken monkey: Added the possibility to highlight
   non-fulltext fields.
 - #2598288 by ethan.han777, JeroenT, drunken monkey: Fixed potential notices in
