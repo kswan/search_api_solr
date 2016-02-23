@@ -176,6 +176,10 @@ class SearchApiSolrService extends SearchApiAbstractService {
       '#type' => 'textfield',
       '#title' => t('Username'),
       '#default_value' => $options['http_user'],
+      // This prefix with no-op text and password field will keep most browsers
+      // from autocompleting these fields, which is hardly ever what the user
+      // wants.
+      '#prefix' => '<input type="text" style="display:none" /><input type="password" style="display:none" />',
     );
     $form['http']['http_pass'] = array(
       '#type' => 'password',
