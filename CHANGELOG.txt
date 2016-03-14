@@ -1,3 +1,6 @@
+Search API Solr Search 1.x, dev (xxxx-xx-xx):
+---------------------------------------------
+
 Search API Solr Search 1.10 (2016-03-14):
 -----------------------------------------
 - #2604322 by lex0r, drunken monkey: Added the option to log all Solr queries.
