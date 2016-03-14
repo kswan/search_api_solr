@@ -944,10 +944,18 @@ class SearchApiSolrConnection implements SearchApiSolrConnectionInterface {
     // built-in http_build_query() doesn't give us the format Solr wants.
     $queryString = $this->httpBuildQuery($params);
 
+    if (!empty($this->options['log_query'])) {
+      watchdog('search_api_solr', 'Query: @query', array('@query' => $queryString), WATCHDOG_DEBUG);
+    }
+
     if ($method == 'GET' || $method == 'AUTO') {
       $searchUrl = $this->constructUrl(self::SEARCH_SERVLET, array(), $queryString);
       if ($method == 'GET' || strlen($searchUrl) <= variable_get('search_api_solr_http_get_max_length', 4000)) {
-        return $this->sendRawGet($searchUrl);
+        $response = $this->sendRawGet($searchUrl);
+        if (!empty($this->options['log_response'])) {
+          $this->logResponse($response);
+        }
+        return $response;
       }
     }
 
@@ -955,7 +963,28 @@ class SearchApiSolrConnection implements SearchApiSolrConnectionInterface {
     $searchUrl = $this->constructUrl(self::SEARCH_SERVLET);
     $options['data'] = $queryString;
     $options['headers']['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8';
-    return $this->sendRawPost($searchUrl, $options);
+    $response = $this->sendRawPost($searchUrl, $options);
+
+    if (!empty($this->options['log_response'])) {
+      $this->logResponse($response);
+    }
+
+    return $response;
+  }
+
+  /**
+   * Logs a Solr response object.
+   *
+   * @param object $response
+   *   The response received from Solr.
+   */
+  protected function logResponse($response) {
+    $data = $response->code . ' ' . $response->status_message . "\n" . print_r($response->response, TRUE);
+    watchdog('search_api_solr', 'Response: <div style="white-space: pre-wrap;">@response</div>', array('@response' => $data), WATCHDOG_DEBUG);
+
+    if (!empty($response->facet_counts)) {
+      watchdog('search_api_solr', 'Facets: <div style="white-space: pre-wrap;">@facets</div>', array('@facets' => print_r($response->facet_counts, TRUE)), WATCHDOG_DEBUG);
+    }
   }
 
 }

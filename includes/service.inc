@@ -80,6 +80,8 @@ class SearchApiSolrService extends SearchApiAbstractService {
       'retrieve_data' => FALSE,
       'highlight_data' => FALSE,
       'skip_schema_check' => FALSE,
+      'log_query' => FALSE,
+      'log_response' => FALSE,
       'solr_version' => '',
       'http_method' => 'AUTO',
       // Default to TRUE for new servers, but to FALSE for existing ones.
@@ -214,6 +216,11 @@ class SearchApiSolrService extends SearchApiAbstractService {
       '#description' => t('When retrieving result data from the Solr server, try to highlight the search terms in the returned fulltext fields.'),
       '#default_value' => $options['highlight_data'],
     );
+    // Highlighting retrieved data only makes sense when we retrieve data.
+    // (Actually, internally it doesn't really matter. However, from a user's
+    // perspective, having to check both probably makes sense.)
+    $form['advanced']['highlight_data']['#states']['invisible']
+    [':input[name="options[form][advanced][retrieve_data]"]']['checked'] = FALSE;
     $form['advanced']['skip_schema_check'] = array(
       '#type' => 'checkbox',
       '#title' => t('Skip schema verification'),
@@ -232,12 +239,6 @@ class SearchApiSolrService extends SearchApiAbstractService {
       ),
       '#default_value' => $options['solr_version'],
     );
-    // Highlighting retrieved data only makes sense when we retrieve data.
-    // (Actually, internally it doesn't really matter. However, from a user's
-    // perspective, having to check both probably makes sense.)
-    $form['advanced']['highlight_data']['#states']['invisible']
-        [':input[name="options[form][advanced][retrieve_data]"]']['checked'] = FALSE;
-
     $form['advanced']['http_method'] = array(
       '#type' => 'select',
       '#title' => t('HTTP method'),
@@ -248,6 +249,18 @@ class SearchApiSolrService extends SearchApiAbstractService {
         'POST' => 'POST',
         'GET' => 'GET',
       ),
+    );
+    $form['advanced']['log_query'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Log search requests'),
+      '#description' => t('Log all outgoing Solr search requests.'),
+      '#default_value' => $options['log_query'],
+    );
+    $form['advanced']['log_response'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Log search results'),
+      '#description' => t('Log all search result responses received from Solr. NOTE: This may slow down your site since all response data (including possible retrieved data) will be saved in the Drupal log.'),
+      '#default_value' => $options['log_response'],
     );
 
     if (module_exists('search_api_autocomplete')) {
