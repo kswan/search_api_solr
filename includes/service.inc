@@ -983,7 +983,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
           // If the fq consists only of a filter on this field, replace it with
           // a range.
           $preg_field = preg_quote($escaped_field, '/');
-          if (preg_match('/^' . $preg_field . ':\["?(\*|\d+(?:\.\d+)?)"? TO "?(\*|\d+(?:\.\d+)?)"?\]$/', $value, $m)) {
+          if (preg_match('/^(?:\{!tag[^}]+\})?' . $preg_field . ':\["?(\*|\d+(?:\.\d+)?)"? TO "?(\*|\d+(?:\.\d+)?)"?\]$/', $value, $m)) {
             unset($fq[$key]);
             if ($m[1] && is_numeric($m[1])) {
               $min_radius = isset($min_radius) ? max($min_radius, $m[1]) : $m[1];
