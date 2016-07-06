@@ -1,5 +1,5 @@
-Search API Solr Search 1.x, dev (xxxx-xx-xx):
----------------------------------------------
+Search API Solr Search 1.11 (2016-07-06):
+-----------------------------------------
 - #2710397 by drunken monkey: Fixed escaping of highlighting tags.
 - #2636016 by drunken monkey: Fixed location search distance facets.
 
