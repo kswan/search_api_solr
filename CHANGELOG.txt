@@ -1,5 +1,7 @@
 Search API Solr Search 1.x, dev (xxxx-xx-xx):
 ---------------------------------------------
+- #2733625 by joelstein, drunken monkey: Fixed notice in
+  Connection::getFields().
 
 Search API Solr Search 1.11 (2016-07-06):
 -----------------------------------------

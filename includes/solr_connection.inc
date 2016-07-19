@@ -367,8 +367,11 @@ class SearchApiSolrConnection implements SearchApiSolrConnectionInterface {
    */
   public function getFields($num_terms = 0) {
     $fields = array();
-    foreach ($this->getLuke($num_terms)->fields as $name => $info) {
-      $fields[$name] = new SearchApiSolrField($info);
+    $luke_data = $this->getLuke($num_terms);
+    if (isset($luke_data->fields)) {
+      foreach ($luke_data->fields as $name => $info) {
+        $fields[$name] = new SearchApiSolrField($info);
+      }
     }
     return $fields;
   }
