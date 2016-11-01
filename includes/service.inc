@@ -213,7 +213,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
     $form['advanced']['highlight_data'] = array(
       '#type' => 'checkbox',
       '#title' => t('Highlight retrieved data'),
-      '#description' => t('When retrieving result data from the Solr server, try to highlight the search terms in the returned fulltext fields.'),
+      '#description' => t('When retrieving result data from the Solr server, try to highlight the search terms in the returned fulltext fields. <strong>Note:</strong> Do not use the "Highlighting" processor for the index together with this option – use one or the other.'),
       '#default_value' => $options['highlight_data'],
     );
     // Highlighting retrieved data only makes sense when we retrieve data.
@@ -230,7 +230,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
     $form['advanced']['solr_version'] = array(
       '#type' => 'select',
       '#title' => t('Solr version override'),
-      '#description' => t('Specify the Solr version manually in case it cannot be retrived automatically. The version can be found in the Solr admin interface under "Solr Specification Version" or "solr-spec"'),
+      '#description' => t('Specify the Solr version manually in case it cannot be retrieved automatically. The version can be found in the Solr admin interface under "Solr Specification Version" or "solr-spec".'),
       '#options' => array(
         '' => t('Determine automatically'),
         '3' => '3.x',
