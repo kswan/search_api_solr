@@ -163,7 +163,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
     $form['path'] = array(
       '#type' => 'textfield',
       '#title' => t('Solr path'),
-      '#description' => t('The path that identifies the Solr instance to use on the server. (For Solr 4.x servers, this should include the name of the core to use.)'),
+      '#description' => t('The path that identifies the Solr instance to use on the server. (For Solr versions 4 and above, this should include the name of the core to use.)'),
       '#default_value' => $options['path'],
     );
 
@@ -224,7 +224,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
     $form['advanced']['skip_schema_check'] = array(
       '#type' => 'checkbox',
       '#title' => t('Skip schema verification'),
-      '#description' => t('Skip the automatic check for schema-compatibillity. Use this override if you are seeing an error-message about an incompatible schema.xml configuration file, and you are sure the configuration is compatible.'),
+      '#description' => t('Skip the automatic check for schema-compatibility. Use this override if you are seeing an error-message about an incompatible schema.xml configuration file, and you are sure the configuration is compatible.'),
       '#default_value' => $options['skip_schema_check'],
     );
     $form['advanced']['solr_version'] = array(

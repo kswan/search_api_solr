@@ -1,5 +1,6 @@
 Search API Solr Search 1.x, dev (xxxx-xx-xx):
 ---------------------------------------------
+- #2807327 by drunken monkey: Fixed configuration form descriptions.
 - #2772199 by drunken monkey: Added a warning to the description for the
   highlighting server option.
 - #2733625 by joelstein, drunken monkey: Fixed notice in
