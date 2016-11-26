@@ -1383,10 +1383,25 @@ class SearchApiSolrService extends SearchApiAbstractService {
         if (substr($solr_property, 0, $prefix_length) == $prefix && !empty($response->highlighting->$id->$solr_property)) {
           $value = $response->highlighting->$id->$solr_property;
           $value = $this->sanitizeHighlightValue($value, $search_api_property);
-          $fields[$search_api_property] = array(
-            '#value' => $this->formatHighlighting($value),
-            '#sanitize_callback' => FALSE,
-          );
+          // Remove highlight prefixes and suffixes so we could compare values
+          // in order to replace the correspond items.
+          $orig_value = preg_replace('#\[(/?)HIGHLIGHT\]#', '', $value);
+          $field_values = $this->sanitizeHighlightValue($fields[$search_api_property]);
+          foreach ($field_values as $delta => $field_value) {
+            foreach ($orig_value as $num => $item) {
+              if ($item === $field_value) {
+                $field_values[$delta] = $this->formatHighlighting($value[$num]);
+                $change = TRUE;
+                continue 2;
+              }
+            }
+          }
+          if (!empty($change)) {
+            $fields[$search_api_property] = array(
+              '#value' => $field_values,
+              '#sanitize_callback' => FALSE,
+            );
+          }
         }
       }
     }
