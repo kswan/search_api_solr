@@ -1,5 +1,6 @@
 Search API Solr Search 1.x, dev (xxxx-xx-xx):
 ---------------------------------------------
+- #2677912 by jts86, mian3010: Added option to disable committing for Solr.
 - #2828473 by detroz: Fixed incorrect variable initialization.
 - #2826565 by Sardis, drunken monkey: Fixed multi-valued field highlighting.
 - #2807327 by drunken monkey: Fixed configuration form descriptions.

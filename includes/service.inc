@@ -82,6 +82,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
       'skip_schema_check' => FALSE,
       'log_query' => FALSE,
       'log_response' => FALSE,
+      'commits_disabled' => FALSE,
       'solr_version' => '',
       'http_method' => 'AUTO',
       // Default to TRUE for new servers, but to FALSE for existing ones.
@@ -261,6 +262,12 @@ class SearchApiSolrService extends SearchApiAbstractService {
       '#title' => t('Log search results'),
       '#description' => t('Log all search result responses received from Solr. NOTE: This may slow down your site since all response data (including possible retrieved data) will be saved in the Drupal log.'),
       '#default_value' => $options['log_response'],
+    );
+    $form['advanced']['commits_disabled'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Disable explicit committing'),
+      '#description' => t('Do not send any commit commands to the Solr server.'),
+      '#default_value' => $options['commits_disabled'],
     );
 
     if (module_exists('search_api_autocomplete')) {
@@ -2368,6 +2375,10 @@ class SearchApiSolrService extends SearchApiAbstractService {
    * Sends a commit command to the Solr server.
    */
   public function commit() {
+    // If committing has been disabled altogether, do nothing here.
+    if (!empty($this->options['commits_disabled'])) {
+      return;
+    }
     try {
       $this->connect();
       return $this->solr->commit(FALSE);
