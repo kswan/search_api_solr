@@ -956,7 +956,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
 
         unset($radius);
         $field = $fields[$spatial['field']];
-        $escaped_field = SearchApiSolrConnection::escapeFieldName($field);
+        $escaped_field = call_user_func(array($this->connection_class, 'escapeFieldName'), $field);
 
         // If proper bbox coordinates were given use them to filter.
         if (isset($spatial['bbox'])) {
