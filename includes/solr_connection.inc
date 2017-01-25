@@ -517,7 +517,6 @@ class SearchApiSolrConnection implements SearchApiSolrConnectionInterface {
   public function clearCache() {
     if ($cid = $this->getCacheId()) {
       cache_clear_all($cid, 'cache_search_api_solr', TRUE);
-      cache_clear_all($cid, 'cache_search_api_solr', TRUE);
     }
     $this->luke = array();
     $this->stats = NULL;

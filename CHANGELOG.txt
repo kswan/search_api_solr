@@ -1,5 +1,7 @@
 Search API Solr Search 1.x, dev (xxxx-xx-xx):
 ---------------------------------------------
+- #2842661 by gabrielu, drunken monkey: Fixed duplicate code line in
+  clearCache().
 - #2834159 by zniki.ru: Fixed left-over explicit
   SearchApiSolrConnection::escapeFieldName() call.
 - #2677912 by jts86, mian3010: Added option to disable committing for Solr.
