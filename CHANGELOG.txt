@@ -1,5 +1,6 @@
 Search API Solr Search 1.x, dev (xxxx-xx-xx):
 ---------------------------------------------
+- #2711685 by berliner: Added support for Solr 6.
 - #2842661 by gabrielu, drunken monkey: Fixed duplicate code line in
   clearCache().
 - #2834159 by zniki.ru: Fixed left-over explicit
