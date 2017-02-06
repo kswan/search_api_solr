@@ -1,5 +1,7 @@
 Search API Solr Search 1.x, dev (xxxx-xx-xx):
 ---------------------------------------------
+- #2612770 by Temoor, drunken monkey: Fixed conjunction in complex filter
+  conditions.
 - #2711685 by berliner: Added support for Solr 6.
 - #2842661 by gabrielu, drunken monkey: Fixed duplicate code line in
   clearCache().
