@@ -1,3 +1,6 @@
+Search API Solr Search 1.x, dev (xxxx-xx-xx):
+---------------------------------------------
+
 Search API Solr Search 1.12 (2017-02-23):
 -----------------------------------------
 - #2612770 by Temoor, drunken monkey: Fixed conjunction in complex filter
