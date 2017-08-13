@@ -646,9 +646,17 @@ class SearchApiSolrService extends SearchApiAbstractService {
    * This has to consist of both index and item ID. Optionally, the site hash is
    * also included.
    *
+   * @param string $index_id
+   *   The search index's machine name.
+   * @param mixed $item_id
+   *   The Search API item ID of the item.
+   *
+   * @return string
+   *   The Solr ID to use for this item.
+   *
    * @see search_api_solr_site_hash()
    */
-  protected function createId($index_id, $item_id) {
+  public function createId($index_id, $item_id) {
     $site_hash = !empty($this->options['site_hash']) ? search_api_solr_site_hash() . '-' : '';
     return "$site_hash$index_id-$item_id";
   }

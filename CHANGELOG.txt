@@ -1,5 +1,7 @@
 Search API Solr Search 1.x, dev (xxxx-xx-xx):
 ---------------------------------------------
+- #2824956 by lex0r, drunken monkey: Added support for atomic updates on API
+  level.
 - #2867076 by Sardis: Fixed Solr config name for Solr 5.x.
 
 Search API Solr Search 1.12 (2017-02-23):
