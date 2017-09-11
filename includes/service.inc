@@ -1311,14 +1311,15 @@ class SearchApiSolrService extends SearchApiAbstractService {
       // SearchApiSolrService::getFieldNames().
       foreach ($fields as $search_api_property => $solr_property) {
         if (isset($doc->{$solr_property})) {
-          $result['fields'][$search_api_property] = $doc->{$solr_property};
+          $value = $doc->{$solr_property};
           // Date fields need some special treatment to become valid date values
           // (i.e., timestamps) again.
           if (isset($field_options[$search_api_property]['type'])
-              && $field_options[$search_api_property]['type'] == 'date'
-              && preg_match('/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/', $result['fields'][$search_api_property])) {
-            $result['fields'][$search_api_property] = strtotime($result['fields'][$search_api_property]);
+              && search_api_extract_inner_type($field_options[$search_api_property]['type']) === 'date'
+              && preg_match('/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/', $value)) {
+            $value = is_array($value) ? array_map('strtotime', $value) : strtotime($value);
           }
+          $result['fields'][$search_api_property] = $value;
         }
       }
 
@@ -2260,14 +2261,15 @@ class SearchApiSolrService extends SearchApiAbstractService {
       $solr_id = $this->createId($doc->index_id, $doc->item_id);
       foreach ($fields as $search_api_property => $solr_property) {
         if (isset($doc->{$solr_property})) {
-          $result['fields'][$search_api_property] = $doc->{$solr_property};
+          $value = $doc->{$solr_property};
           // Date fields need some special treatment to become valid date values
           // (i.e., timestamps) again.
           if (isset($field_options[$search_api_property]['type'])
-              && $field_options[$search_api_property]['type'] == 'date'
-              && preg_match('/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/', $result['fields'][$search_api_property])) {
-            $result['fields'][$search_api_property] = strtotime($result['fields'][$search_api_property]);
+              && search_api_extract_inner_type($field_options[$search_api_property]['type']) === 'date'
+              && preg_match('/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/', $value)) {
+            $value = is_array($value) ? array_map('strtotime', $value) : strtotime($value);
           }
+          $result['fields'][$search_api_property] = $value;
         }
       }
 
