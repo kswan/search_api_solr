@@ -1,5 +1,7 @@
 Search API Solr Search 1.x, dev (xxxx-xx-xx):
 ---------------------------------------------
+- #2916951 by drunken monkey, mkalkbrenner, osopolar, jcnventura, arcadLemon,
+  Siridivi: Added support for Solr 7.x.
 - #2949293 by Novitsh: Fixed path to README.txt on multilingual sites.
 - #2900308 by cgoffin, drunken monkey: Fixed retrieval of multi-valued date
   fields in results.
