@@ -1483,18 +1483,21 @@ class SearchApiSolrService extends SearchApiAbstractService {
     if (isset($response->facet_counts->facet_fields)) {
       $facet_fields = $response->facet_counts->facet_fields;
 
+      // The key for the "missing" facet (empty string in the JSON). This will
+      // be either "" or "_empty_", depending on the PHP version.
+      $empty_key = key((array) json_decode('{"":5}'));
       foreach ($extract_facets as $delta => $info) {
         $field = $fields[$info['field']];
         if (!empty($facet_fields->$field)) {
           $min_count = $info['min_count'];
           $terms = $facet_fields->$field;
           if ($info['missing']) {
-            // We have to correctly incorporate the "_empty_" term.
+            // We have to correctly incorporate the "missing" term ($empty_key).
             // This will ensure that the term with the least results is dropped,
             // if the limit would be exceeded.
-            if (isset($terms->_empty_)) {
-              if ($terms->_empty_ < $min_count) {
-                unset($terms->_empty_);
+            if (isset($terms->$empty_key)) {
+              if ($terms->$empty_key < $min_count) {
+                unset($terms->$empty_key);
               }
               else {
                 $terms = (array) $terms;
@@ -1505,14 +1508,14 @@ class SearchApiSolrService extends SearchApiAbstractService {
               }
             }
           }
-          elseif (isset($terms->_empty_)) {
+          elseif (isset($terms->$empty_key)) {
             $terms = clone $terms;
-            unset($terms->_empty_);
+            unset($terms->$empty_key);
           }
           $type = isset($index->options['fields'][$info['field']]['type']) ? search_api_extract_inner_type($index->options['fields'][$info['field']]['type']) : 'string';
           foreach ($terms as $term => $count) {
             if ($count >= $min_count) {
-              if ($term === '_empty_') {
+              if ($term === $empty_key) {
                 $term = '!';
               }
               elseif ($type == 'boolean') {
@@ -2290,18 +2293,21 @@ class SearchApiSolrService extends SearchApiAbstractService {
     if (isset($response->facet_counts->facet_fields)) {
       $results['search_api_facets'] = array();
       $facet_fields = $response->facet_counts->facet_fields;
+      // The key for the "missing" facet (empty string in the JSON). This will
+      // be either "" or "_empty_", depending on the PHP version.
+      $empty_key = key((array) json_decode('{"":5}'));
       foreach ($facets as $delta => $info) {
         $field = $solr_fields[$info['field']];
         if (!empty($facet_fields->$field)) {
           $min_count = $info['min_count'];
           $terms = $facet_fields->$field;
           if ($info['missing']) {
-            // We have to correctly incorporate the "_empty_" term.
+            // We have to correctly incorporate the "missing" term ($empty_key).
             // This will ensure that the term with the least results is dropped,
             // if the limit would be exceeded.
-            if (isset($terms->_empty_)) {
-              if ($terms->_empty_ < $min_count) {
-                unset($terms->_empty_);
+            if (isset($terms->$empty_key)) {
+              if ($terms->$empty_key < $min_count) {
+                unset($terms->$empty_key);
               }
               else {
                 $terms = (array) $terms;
@@ -2312,14 +2318,14 @@ class SearchApiSolrService extends SearchApiAbstractService {
               }
             }
           }
-          elseif (isset($terms->_empty_)) {
+          elseif (isset($terms->$empty_key)) {
             $terms = clone $terms;
-            unset($terms->_empty_);
+            unset($terms->$empty_key);
           }
           $type = isset($fields[$info['field']]['type']) ? search_api_extract_inner_type($fields[$info['field']]['type']) : 'string';
           foreach ($terms as $term => $count) {
             if ($count >= $min_count) {
-              if ($term === '_empty_') {
+              if ($term === $empty_key) {
                 $term = '!';
               }
               elseif ($type == 'boolean') {
