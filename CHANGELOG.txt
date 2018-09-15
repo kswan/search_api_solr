@@ -1,5 +1,6 @@
 Search API Solr Search 1.x, dev (xxxx-xx-xx):
 ---------------------------------------------
+- #2998931 by drunken monkey, mahipal46: Fixed warning during excerpt creation.
 - #2459457 by das-peter, drunken monkey, ruloweb, SpadXIII, mkalkbrenner: Added
   support for the "(not) between" operator.
 - #2970829 by donquixote, drunken monkey: Fixed "missing" facet in PHP 7.

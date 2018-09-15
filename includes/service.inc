@@ -1403,7 +1403,10 @@ class SearchApiSolrService extends SearchApiAbstractService {
           // Remove highlight prefixes and suffixes so we could compare values
           // in order to replace the correspond items.
           $orig_value = preg_replace('#\[(/?)HIGHLIGHT\]#', '', $value);
-          $field_values = $this->sanitizeHighlightValue($fields[$search_api_property]);
+          $field_values = array();
+          if (!empty($fields[$search_api_property])) {
+            $field_values = $this->sanitizeHighlightValue($fields[$search_api_property]);
+          }
           foreach ($field_values as $delta => $field_value) {
             foreach ($orig_value as $num => $item) {
               if ($item === $field_value) {
