@@ -1,5 +1,5 @@
-Search API Solr Search 1.x, dev (xxxx-xx-xx):
----------------------------------------------
+Search API Solr Search 1.13 (2018-09-17):
+-----------------------------------------
 - #2998931 by drunken monkey, mahipal46: Fixed warning during excerpt creation.
 - #2459457 by das-peter, drunken monkey, ruloweb, SpadXIII, mkalkbrenner: Added
   support for the "(not) between" operator.
