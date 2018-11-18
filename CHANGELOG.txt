@@ -1,5 +1,7 @@
 Search API Solr Search 1.x, dev (xxxx-xx-xx):
 ---------------------------------------------
+- #3006424 by drunken monkey: Fixed problem when retrieving multi-valued date
+  fields.
 
 Search API Solr Search 1.14 (2018-10-10):
 -----------------------------------------
