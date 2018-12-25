@@ -870,7 +870,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
 
     // Set searched fields.
     $options = $query->getOptions();
-    $search_fields = $query->getFields();
+    $search_fields = $this->getQueryFields($query);
     // Get the index fields to be able to retrieve boosts.
     $index_fields = $index->getFields() + array(
       'search_api_relevance' => array('type' => 'decimal', 'indexed' => TRUE),
@@ -1351,7 +1351,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
 
       $index_id = $this->getIndexId($index->machine_name);
       $solr_id = $this->createId($index_id, $result['id']);
-      $excerpt = $this->getExcerpt($response, $solr_id, $result['fields'], $fields, $query->getFields());
+      $excerpt = $this->getExcerpt($response, $solr_id, $result['fields'], $fields, $this->getQueryFields($query));
       if ($excerpt) {
         $result['excerpt'] = $excerpt;
       }
@@ -2050,8 +2050,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
     }
 
     // Set searched fields
-    $options = $query->getOptions();
-    $search_fields = $query->getFields();
+    $search_fields = $this->getQueryFields($query);
     $qf = array();
     foreach ($search_fields as $f) {
       $qf[] = $fields[$f];
@@ -2623,6 +2622,29 @@ class SearchApiSolrService extends SearchApiAbstractService {
     // Prepend environment prefix.
     $id = variable_get('search_api_solr_index_prefix', '') . $id;
     return $id;
+  }
+
+  /**
+   * Retrieves the effective fulltext fields from the query.
+   *
+   * Automatically translates a NULL value in the query object to all fulltext
+   * fields in the search index.
+   *
+   * If a specific backend supports any "virtual" fulltext fields not listed in
+   * the index, it should override this method to add them, if appropriate.
+   *
+   * @param SearchApiQueryInterface $query
+   *   The search query.
+   *
+   * @return string[]
+   *   The fulltext fields in which to search for the search keys.
+   *
+   * @see SearchApiQueryInterface::getFields()
+   */
+  protected function getQueryFields(SearchApiQueryInterface $query) {
+    $fulltext_fields = $query->getFields();
+    $index_fields = $query->getIndex()->getFulltextFields();
+    return $fulltext_fields === NULL ? $index_fields : array_intersect($fulltext_fields, $index_fields);
   }
 
 }

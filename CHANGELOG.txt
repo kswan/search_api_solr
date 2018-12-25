@@ -1,5 +1,7 @@
 Search API Solr Search 1.x, dev (xxxx-xx-xx):
 ---------------------------------------------
+- #3013932 by drunken monkey, RajeevChoudhary: Fixed error with unset query
+  fields.
 - #3006424 by drunken monkey: Fixed problem when retrieving multi-valued date
   fields.
 
