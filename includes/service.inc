@@ -2357,23 +2357,28 @@ class SearchApiSolrService extends SearchApiAbstractService {
     $results = array();
     $results['result count'] = $response->response->numFound;
     $results['results'] = array();
-    $tmp = array();
+    $fulltext_fields_by_index = array();
+    foreach ($search_fields as $field) {
+      list ($index_id, $field) = explode(':', $field, 2);
+      $fulltext_fields_by_index[$index_id][] = $field;
+    }
     foreach ($response->response->docs as $id => $doc) {
-      if (isset($indexes[$doc->index_id])) {
-        $index = $indexes[$doc->index_id];
+      $index_id = $doc->index_id;
+      if (isset($indexes[$index_id])) {
+        $index = $indexes[$index_id];
       }
       else {
-        $index = new SearchApiIndex(array('machine_name' => $doc->index_id));
+        $index = new SearchApiIndex(array('machine_name' => $index_id));
       }
       $fields = $this->getFieldNames($index);
       $field_options = $index->options['fields'];
       $result = array(
         'id' => NULL,
-        'index_id' => $doc->index_id,
+        'index_id' => $index_id,
         'score' => NULL,
         'fields' => array(),
       );
-      $solr_id = $this->createId($doc->index_id, $doc->item_id);
+      $solr_id = $this->createId($index_id, $doc->item_id);
       foreach ($fields as $search_api_property => $solr_property) {
         if (isset($doc->{$solr_property})) {
           $value = $doc->{$solr_property};
@@ -2388,7 +2393,8 @@ class SearchApiSolrService extends SearchApiAbstractService {
         }
       }
 
-      $excerpt = $this->getExcerpt($response, $solr_id, $result['fields'], $fields, $search_fields);
+      $fulltext_fields = isset($fulltext_fields_by_index[$index_id]) ? $fulltext_fields_by_index[$index_id] : array();
+      $excerpt = $this->getExcerpt($response, $solr_id, $result['fields'], $fields, $fulltext_fields);
       if ($excerpt) {
         $result['excerpt'] = $excerpt;
       }
