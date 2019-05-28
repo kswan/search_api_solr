@@ -1,5 +1,7 @@
 Search API Solr Search 1.x, dev (xxxx-xx-xx):
 ---------------------------------------------
+- #3048646 by drunken monkey: Fixed edge case problem when logging Solr
+  responses.
 - #2128537 by Frando, drunken monkey, Ronino, g089h515r806, jmdeleon: Added
   support for facet queries.
 - #3012216 by drunken monkey: Fixed excerpts for multi-index search views.
