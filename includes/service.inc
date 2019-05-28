@@ -1596,91 +1596,115 @@ class SearchApiSolrService extends SearchApiAbstractService {
 
     $extract_facets = $query->getOption('search_api_facets', array());
 
+    $facet_fields = array();
+    $facet_queries = array();
     if (isset($response->facet_counts->facet_fields)) {
       $facet_fields = $response->facet_counts->facet_fields;
+    }
+    if (isset($response->facet_counts->facet_queries)) {
+      $facet_queries = $response->facet_counts->facet_queries;
+    }
 
-      // The key for the "missing" facet (empty string in the JSON). This will
-      // be either "" or "_empty_", depending on the PHP version.
-      $empty_key = key((array) json_decode('{"":5}'));
-      foreach ($extract_facets as $delta => $info) {
-        $field = $fields[$info['field']];
-        if (!empty($facet_fields->$field)) {
-          $min_count = $info['min_count'];
-          $terms = $facet_fields->$field;
-          if ($info['missing']) {
-            // We have to correctly incorporate the "missing" term ($empty_key).
-            // This will ensure that the term with the least results is dropped,
-            // if the limit would be exceeded.
-            if (isset($terms->$empty_key)) {
-              if ($terms->$empty_key < $min_count) {
-                unset($terms->$empty_key);
-              }
-              else {
-                $terms = (array) $terms;
-                arsort($terms);
-                if ($info['limit'] > 0 && count($terms) > $info['limit']) {
-                  array_pop($terms);
-                }
-              }
-            }
-          }
-          elseif (isset($terms->$empty_key)) {
-            $terms = clone $terms;
-            unset($terms->$empty_key);
-          }
-          $type = isset($index->options['fields'][$info['field']]['type']) ? search_api_extract_inner_type($index->options['fields'][$info['field']]['type']) : 'string';
-          foreach ($terms as $term => $count) {
-            if ($count >= $min_count) {
-              if ($term === $empty_key) {
-                $term = '!';
-              }
-              elseif ($type == 'boolean') {
-                if ($term == 'true') {
-                  $term = '"1"';
-                }
-                elseif ($term == 'false') {
-                  $term = '"0"';
-                }
-              }
-              elseif ($type == 'date') {
-                $term = $term ? '"' . strtotime($term) . '"' : NULL;
-              }
-              else {
+    // The key for the "missing" facet (empty string in the JSON). This will
+    // be either "" or "_empty_", depending on the PHP version.
+    $empty_key = key((array) json_decode('{"":5}'));
+    foreach ($extract_facets as $delta => $info) {
+      $field = $fields[$info['field']];
+      // Fields that have solr facet queries set need special handling.
+      if (!empty($info['solr_facet_query'])) {
+        if (!empty($facet_queries)) {
+          foreach ($facet_queries as $term => $count) {
+            // Strip a leading local param so we can correctly detect the
+            // field. E.g. "{!ex=...}" might have been set in getFacetParams()
+            // for OR facets.
+            $term = preg_replace('/^{[^}]+}/', '', $term);
+
+            if (strpos($term, $field . ':') === 0) {
+              $term = substr($term, strlen($field) + 1);
+              if (!preg_match('/^(?:[(\[][^ ]+ .*[)\]]|".*"|!)$/', $term)) {
                 $term = "\"$term\"";
               }
-              if ($term) {
-                $facets[$delta][] = array(
-                  'filter' => $term,
-                  'count' => $count,
-                );
-              }
+              $facets[$delta][] = array(
+                'filter' => $term,
+                'count' => $count,
+                'solr_facet_query' => TRUE,
+              );
             }
-          }
-          if (empty($facets[$delta])) {
-            unset($facets[$delta]);
           }
         }
       }
-
+      elseif (!empty($facet_fields->$field)) {
+        $min_count = $info['min_count'];
+        $terms = $facet_fields->$field;
+        if ($info['missing']) {
+          // We have to correctly incorporate the "missing" term ($empty_key).
+          // This will ensure that the term with the least results is dropped,
+          // if the limit would be exceeded.
+          if (isset($terms->$empty_key)) {
+            if ($terms->$empty_key < $min_count) {
+              unset($terms->$empty_key);
+            }
+            else {
+              $terms = (array) $terms;
+              arsort($terms);
+              if ($info['limit'] > 0 && count($terms) > $info['limit']) {
+                array_pop($terms);
+              }
+            }
+          }
+        }
+        elseif (isset($terms->$empty_key)) {
+          $terms = clone $terms;
+          unset($terms->$empty_key);
+        }
+        $type = isset($index->options['fields'][$info['field']]['type']) ? search_api_extract_inner_type($index->options['fields'][$info['field']]['type']) : 'string';
+        foreach ($terms as $term => $count) {
+          if ($count >= $min_count) {
+            if ($term === $empty_key) {
+              $term = '!';
+            }
+            elseif ($type == 'boolean') {
+              if ($term == 'true') {
+                $term = '"1"';
+              }
+              elseif ($term == 'false') {
+                $term = '"0"';
+              }
+            }
+            elseif ($type == 'date') {
+              $term = $term ? '"' . strtotime($term) . '"' : NULL;
+            }
+            else {
+              $term = "\"$term\"";
+            }
+            if ($term) {
+              $facets[$delta][] = array(
+                'filter' => $term,
+                'count' => $count,
+              );
+            }
+          }
+        }
+        if (empty($facets[$delta])) {
+          unset($facets[$delta]);
+        }
+      }
     }
 
-    if (isset($response->facet_counts->facet_queries)) {
-      if ($spatials = $query->getOption('search_api_location')) {
-        $queries = array();
-        foreach ($response->facet_counts->facet_queries as $key => $count) {
-          if (!preg_match('/^spatial-(.*)-(\d+(?:\.\d+)?)$/', $key, $m)) {
-            continue;
-          }
-          if (empty($extract_facets[$m[1]])) {
-            continue;
-          }
-          $facet = $extract_facets[$m[1]];
-          if ($count >= $facet['min_count']) {
-            $facets[$m[1]][] = array(
-              'filter' => "[* {$m[2]}]",
-              'count' => $count,
-            );
-          }
+    if ($facet_queries && $query->getOption('search_api_location')) {
+      foreach ($facet_queries as $key => $count) {
+        if (!preg_match('/^spatial-(.*)-(\d+(?:\.\d+)?)$/', $key, $m)) {
+          continue;
+        }
+        if (empty($extract_facets[$m[1]])) {
+          continue;
+        }
+        $facet = $extract_facets[$m[1]];
+        if ($count >= $facet['min_count']) {
+          $facets[$m[1]][] = array(
+            'filter' => "[* {$m[2]}]",
+            'count' => $count,
+          );
         }
       }
     }
@@ -1893,10 +1917,29 @@ class SearchApiSolrService extends SearchApiAbstractService {
       $field = $fields[$info['field']];
       // Check for the "or" operator.
       if (isset($info['operator']) && $info['operator'] === 'or') {
-        // Remember that filters for this field should be tagged.
+        // This tag should automatically be placed on any filters created via
+        // this filter by the Facet API integration. We here use it to exclude
+        // those filters from the logic creating OR facet filters.
         $tag = 'facet:' . $info['field'];
-        // Add the facet field.
-        $facet_params['facet.field'][] = "{!ex=$tag}$field";
+
+        // Check whether Solr facet queries were set for this facet and use
+        // those.
+        if (!empty($info['solr_facet_query'])) {
+          foreach ($info['solr_facet_query'] as $expression) {
+            $facet_params['facet.query'][] = "{!ex=$tag}$field:$expression";
+          }
+        }
+        // Otherwise, add the field through a regular "facet.field" parameter.
+        else {
+          $facet_params['facet.field'][] = "{!ex=$tag}$field";
+        }
+      }
+      elseif (!empty($info['solr_facet_query'])) {
+        // No tagging and excluding like above is necessary as facets are built
+        // with all filters applied.
+        foreach ($info['solr_facet_query'] as $expression) {
+          $facet_params['facet.query'][] = "$field:$expression";
+        }
       }
       else {
         // Add the facet field.

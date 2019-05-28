@@ -168,3 +168,10 @@ Developers
 The SearchApiSolrService class has a few custom extensions, documented with its
 code. Methods of note are deleteItems(), which treats the first argument
 differently in certain cases, and the methods at the end of service.inc.
+
+Also, when requesting facets with a search, you can use the custom
+"solr_facet_query" key in the facet options to pass an array of facet queries to
+Solr, which should be used instead of the default "facet.field" parameter. The
+facet queries will automatically have "FIELD:" prepended to them. The returned
+facets will have an additional "solr_facet_query" key in addition to "filter"
+and "count", to spot them more easily.
