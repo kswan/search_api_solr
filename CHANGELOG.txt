@@ -1,5 +1,7 @@
 Search API Solr Search 1.x, dev (xxxx-xx-xx):
 ---------------------------------------------
+- #3059045 by tomdearden, drunken monkey: Fixed problems with multi-valued date
+  fields at search time.
 - #3048646 by drunken monkey: Fixed edge case problem when logging Solr
   responses.
 - #2128537 by Frando, drunken monkey, Ronino, g089h515r806, jmdeleon: Added

@@ -1316,7 +1316,10 @@ class SearchApiSolrService extends SearchApiAbstractService {
 
           // Date fields need some special treatment to become valid date values
           // (i.e., timestamps) again.
-          $first_value = is_array($value) ? reset($value) : $value;
+          $first_value = $value;
+          while (is_array($first_value)) {
+            $first_value = reset($first_value);
+          }
           if (isset($field_options[$search_api_property]['type'])
               && search_api_extract_inner_type($field_options[$search_api_property]['type']) === 'date'
               && preg_match('/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/', $first_value)) {
@@ -2425,13 +2428,19 @@ class SearchApiSolrService extends SearchApiAbstractService {
       foreach ($fields as $search_api_property => $solr_property) {
         if (isset($doc->{$solr_property})) {
           $value = $doc->{$solr_property};
+
           // Date fields need some special treatment to become valid date values
           // (i.e., timestamps) again.
+          $first_value = $value;
+          while (is_array($first_value)) {
+            $first_value = reset($first_value);
+          }
           if (isset($field_options[$search_api_property]['type'])
               && search_api_extract_inner_type($field_options[$search_api_property]['type']) === 'date'
-              && preg_match('/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/', $value)) {
+              && preg_match('/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/', $first_value)) {
             $value = is_array($value) ? array_map('strtotime', $value) : strtotime($value);
           }
+
           $result['fields'][$search_api_property] = $value;
         }
       }
