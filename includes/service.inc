@@ -1510,71 +1510,72 @@ class SearchApiSolrService extends SearchApiAbstractService {
    *   An array of short, highlighted snippets extracted from the field value.
    */
   protected function extractHighlightingSnippets($value) {
-    $snippets = array();
     $parts = preg_split('#\[/?HIGHLIGHT\]#', $value);
-    $i = 0;
+    $num_parts = count($parts);
+    if ($num_parts < 3) {
+      return array();
+    }
+
+    $snippets = array();
+    $snippet = '';
     $combined_length = 0;
-    while (isset($parts[$i + 2])) {
-      $prefix = $parts[$i];
-      $short_prefix = FALSE;
-      $key = $parts[++$i];
-      $suffix = $parts[++$i];
-
-      // Make sure prefix and suffix are not too long.
-      $length = drupal_strlen($prefix);
-      if ($length > 30) {
-        $space = strrpos(substr($prefix, 0, -25), ' ');
-        // Fall back to just cutting at an arbitrary position, space or no.
-        if ($space === FALSE) {
-          $space = $length - 30;
-        }
-        $prefix = substr($prefix, $space + 1);
-      }
-      else {
-        $short_prefix = TRUE;
+    foreach ($parts as $i => $part) {
+      // Is this a match (even) or context (odd)?
+      if ($i % 2 === 1) {
+        $snippet .= '[HIGHLIGHT]' . $part . '[/HIGHLIGHT]';
+        continue;
       }
 
-      $length = drupal_strlen($suffix);
-      if ($length > 30) {
-        $space = strpos($suffix, ' ', 25);
+      // If there is less than 60 characters between them, we want to fuse two
+      // snippets.
+      if ($snippet && drupal_strlen($part) < 60) {
+        $snippet .= $part;
+        continue;
+      }
+
+      // Add a suffix context to the existing snippet.
+      if ($snippet) {
+        $space = strpos($part, ' ', 25);
         // Fall back to just cutting at an arbitrary position, space or no.
         if ($space === FALSE) {
           $space = 30;
         }
-        $suffix = substr($suffix, 0, $space);
-      }
+        $snippet .= ' ' . substr($part, 0, $space);
 
-      // Fuse two snippets if they are separated by less than 30 characters.
-      $previous = NULL;
-      if ($short_prefix) {
-        $previous = array_pop($snippets);
-        if ($previous) {
-          $prefix = '';
+        $combined_length += drupal_strlen($snippet);
+        $snippets[] = $this->sanitizeAndFormatExcerptSnippet($snippet);
+        $snippet = '';
+
+        // Restrict ourselves to three snippets or 300 characters.
+        if (count($snippets) >= 3 || $combined_length >= 300) {
+          break;
         }
-      }
-      $snippet = $prefix . '[HIGHLIGHT]' . $key . '[/HIGHLIGHT]' . $suffix;
 
-      // Sanitize and format the snippet.
-      $snippet = check_plain($snippet);
-      $snippet = $this->formatHighlighting($snippet);
-      // The created fragments sometimes have leading or trailing punctuation.
-      // We remove that here for all common cases, but take care not to remove
-      // < or > (so HTML tags stay valid).
-      $snippet = trim($snippet, "\00..\x2F:;=\x3F..\x40\x5B..\x60");
-
-      // Prepend the previous snippet if we're fusing.
-      if ($previous) {
-        $snippet = $previous . $snippet;
+        $part = substr($part, $space);
       }
 
-      $snippets[] = $snippet;
-      $combined_length += drupal_strlen($snippet);
-
-      // Restrict ourselves to three snippets or 300 characters.
-      if (count($snippets) >= 3 || $combined_length >= 300) {
+      // If there are no more matches, stop.
+      if ($num_parts <= $i + 1) {
         break;
       }
+
+      // Otherwise, prepare a new prefix for the next match.
+      $length = drupal_strlen($part);
+      if ($length > 30) {
+        $space = strrpos(substr($part, 0, -25), ' ');
+        // Fall back to just cutting at an arbitrary position, space or no.
+        if ($space === FALSE) {
+          $space = $length - 30;
+        }
+        $part = substr($part, $space + 1);
+      }
+      $snippet = $part;
     }
+
+    if ($snippet) {
+      $snippets[] = $this->sanitizeAndFormatExcerptSnippet($snippet);
+    }
+
     return $snippets;
   }
 
@@ -2703,6 +2704,24 @@ class SearchApiSolrService extends SearchApiAbstractService {
     $fulltext_fields = $query->getFields();
     $index_fields = $query->getIndex()->getFulltextFields();
     return $fulltext_fields === NULL ? $index_fields : array_intersect($fulltext_fields, $index_fields);
+  }
+
+  /**
+   *
+   *
+   * @param $snippet
+   *
+   * @return string|string[]
+   */
+  protected function sanitizeAndFormatExcerptSnippet($snippet) {
+    // Sanitize and format the snippet.
+    $snippet = check_plain($snippet);
+    $snippet = $this->formatHighlighting($snippet);
+    // The created fragments sometimes have leading or trailing punctuation.
+    // We remove that here for all common cases, but take care not to remove
+    // < or > (so HTML tags stay valid).
+    $snippet = trim($snippet, "\00..\x2F:;=\x3F..\x40\x5B..\x60");
+    return $snippet;
   }
 
 }
