@@ -143,6 +143,9 @@ Hidden variables
   Since the prefix of fields is used to determine the field type (by default),
   this lets you enable highlighting for other field types. By default,
   highlighting will be possible for all fulltext fields.
+- search_api_solr_connection_class (default: "SearchApiSolrConnection")
+  The connection class to use for connecting to Solr. Needs to implement
+  SearchApiSolrConnectionInterface.
 
 [8] http://wiki.apache.org/solr/UpdateXmlMessages#A.22commit.22_and_.22optimize.22
 

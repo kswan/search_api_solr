@@ -507,14 +507,15 @@ class SearchApiSolrService extends SearchApiAbstractService {
    */
   protected function connect() {
     if (!$this->solr) {
-      if (!class_exists($this->connection_class)) {
-        throw new SearchApiException(t('Invalid class @class set as Solr connection class.', array('@class' => $this->connection_class)));
+      $connection_class = $this->getConnectionClass();
+      if (!class_exists($connection_class)) {
+        throw new SearchApiException(t('Invalid class @class set as Solr connection class.', array('@class' => $connection_class)));
       }
       $options = $this->options + array('server' => $this->server->machine_name);
-      $this->solr = new $this->connection_class($options);
+      $this->solr = new $connection_class($options);
       if (!($this->solr instanceof SearchApiSolrConnectionInterface)) {
         $this->solr = NULL;
-        throw new SearchApiException(t('Invalid class @class set as Solr connection class.', array('@class' => $this->connection_class)));
+        throw new SearchApiException(t('Invalid class @class set as Solr connection class.', array('@class' => $connection_class)));
       }
     }
   }
@@ -831,7 +832,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
       $query = array();
       if ($index) {
         $index_id = $this->getIndexId($index->machine_name);
-        $index_id = call_user_func(array($this->connection_class, 'phrase'), $index_id);
+        $index_id = call_user_func(array($this->getConnectionClass(), 'phrase'), $index_id);
         $query[] = "index_id:$index_id";
       }
       if (!empty($this->options['site_hash'])) {
@@ -885,7 +886,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
     // Extract filters.
     $filter = $query->getFilter();
     $fq = $this->createFilterQueries($filter, $fields, $index->options['fields']);
-    $fq[] = 'index_id:' . call_user_func(array($this->connection_class, 'phrase'), $index_id);
+    $fq[] = 'index_id:' . call_user_func(array($this->getConnectionClass(), 'phrase'), $index_id);
     if (!empty($this->options['site_hash'])) {
       // We don't need to escape the site hash, as that consists only of
       // alphanumeric characters.
@@ -947,7 +948,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
       }
       $mlt_params['mlt.fl'] = implode(',', $mlt_fl);
       $id = $this->createId($index_id, $mlt['id']);
-      $id = call_user_func(array($this->connection_class, 'phrase'), $id);
+      $id = call_user_func(array($this->getConnectionClass(), 'phrase'), $id);
       $keys = 'id:' . $id;
       // In (early versions of) Solr 5, facets aren't supported with MLT.
       if ($version >= 5) {
@@ -965,7 +966,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
 
         unset($radius);
         $field = $fields[$spatial['field']];
-        $escaped_field = call_user_func(array($this->connection_class, 'escapeFieldName'), $field);
+        $escaped_field = call_user_func(array($this->getConnectionClass(), 'escapeFieldName'), $field);
 
         // If proper bbox coordinates were given use them to filter.
         if (isset($spatial['bbox'])) {
@@ -1749,7 +1750,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
       }
       else {
         $key = trim($key);
-        $key = call_user_func(array($this->connection_class, 'phrase'), $key);
+        $key = call_user_func(array($this->getConnectionClass(), 'phrase'), $key);
         $k[] = $key;
       }
     }
@@ -1833,7 +1834,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
    * and operator.
    */
   protected function createFilterQuery($field, $value, $operator, $field_info) {
-    $field = call_user_func(array($this->connection_class, 'escapeFieldName'), $field);
+    $field = call_user_func(array($this->getConnectionClass(), 'escapeFieldName'), $field);
     // Special handling for location fields.
     if (isset($field_info['real_type']) && $field_info['real_type'] == 'location') {
       // Empty / non-empty comparison has to take place in one of the subfields
@@ -1896,9 +1897,9 @@ class SearchApiSolrService extends SearchApiAbstractService {
         $value = format_date($value, 'custom', self::SOLR_DATE_FORMAT, 'UTC');
         break;
       case 'text':
-        return '(' . call_user_func(array($this->connection_class, 'escape'), $value) . ')';
+        return '(' . call_user_func(array($this->getConnectionClass(), 'escape'), $value) . ')';
     }
-    return call_user_func(array($this->connection_class, 'phrase'), $value);
+    return call_user_func(array($this->getConnectionClass(), 'phrase'), $value);
   }
 
   /**
@@ -2106,7 +2107,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
     // Extract filters
     $fq = $this->createFilterQueries($query->getFilter(), $fields, $index->options['fields']);
     $index_id = $this->getIndexId($index->machine_name);
-    $fq[] = 'index_id:' . call_user_func(array($this->connection_class, 'phrase'), $index_id);
+    $fq[] = 'index_id:' . call_user_func(array($this->getConnectionClass(), 'phrase'), $index_id);
     if (!empty($this->options['site_hash'])) {
       // We don't need to escape the site hash, as that consists only of
       // alphanumeric characters.
@@ -2325,7 +2326,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
     foreach ($query->getIndexes() as $index) {
       $index_id = $this->getIndexId($index->machine_name);
       $indexes[$index_id] = $index;
-      $index_filter[] = 'index_id:' . call_user_func(array($this->connection_class, 'phrase'), $index_id);
+      $index_filter[] = 'index_id:' . call_user_func(array($this->getConnectionClass(), 'phrase'), $index_id);
     }
     $fq[] = implode(' OR ', $index_filter);
     if (!empty($this->options['site_hash'])) {
@@ -2595,7 +2596,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
    *   The name of a class which implements SearchApiSolrConnectionInterface.
    */
   public function getConnectionClass() {
-    return $this->connection_class;
+    return variable_get('search_api_solr_connection_class', $this->connection_class);
   }
 
   /**
@@ -2652,7 +2653,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
   public function getFile($file = NULL) {
     $this->connect();
 
-    $file_servlet_name = constant($this->connection_class . '::FILE_SERVLET');
+    $file_servlet_name = constant($this->getConnectionClass() . '::FILE_SERVLET');
 
     $params['contentType'] = 'text/xml;charset=utf-8';
     if ($file) {
