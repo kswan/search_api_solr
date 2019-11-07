@@ -1,3 +1,6 @@
+Search API Solr Search 1.x, dev (xxxx-xx-xx):
+---------------------------------------------
+
 Search API Solr Search 1.15 (2019-11-07):
 -----------------------------------------
 - #3082039 by xlin, drunken monkey: Added a hidden variable for switching the
