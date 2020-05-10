@@ -1,5 +1,7 @@
 Search API Solr Search 1.x, dev (xxxx-xx-xx):
 ---------------------------------------------
+- #3118390 by drunken monkey, bburg: Fixed
+  SearchApiSolrService::queryMultiple().
 
 Search API Solr Search 1.15 (2019-11-07):
 -----------------------------------------

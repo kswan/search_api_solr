@@ -2268,7 +2268,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
    * Implements SearchApiMultiServiceInterface::queryMultiple().
    */
   public function queryMultiple(array $options = array()) {
-    return new SearchApiMultiQuery($this->server, $options);
+    return search_api_multi_query($options);
   }
 
   /**
