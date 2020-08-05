@@ -1985,7 +1985,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
 
     if (!empty($this->options['excerpt']) || !empty($this->options['highlight_data'])) {
       $highlight_params['hl'] = 'true';
-      $highlight_params['hl.fl'] = variable_get('search_api_solr_highlight_prefix', 'tm_') . '*';
+      $highlight_params['hl.fl'] = config_get('search_api_solr.settings', 'search_api_solr_highlight_prefix') . '*';
       $highlight_params['hl.simple.pre'] = '[HIGHLIGHT]';
       $highlight_params['hl.simple.post'] = '[/HIGHLIGHT]';
       $highlight_params['hl.snippets'] = 1;
@@ -2205,7 +2205,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
             // Don't suggest terms that are too frequent (by default in more
             // than 90% of results).
             $result_count = $response->response->numFound;
-            $max_occurrences = $result_count * variable_get('search_api_solr_autocomplete_max_occurrences', 0.9);
+            $max_occurrences = $result_count * config_get('search_api_solr.settings', 'search_api_solr_autocomplete_max_occurrences');
             if (($max_occurrences >= 1 || $i > 0) && $max_occurrences < $result_count) {
               foreach ($matches as $match => $count) {
                 if ($count > $max_occurrences) {
@@ -2596,7 +2596,8 @@ class SearchApiSolrService extends SearchApiAbstractService {
    *   The name of a class which implements SearchApiSolrConnectionInterface.
    */
   public function getConnectionClass() {
-    return variable_get('search_api_solr_connection_class', $this->connection_class);
+      config_set('search_api_solr.settings', 'search_api_solr_connection_class', $this->connection_class);
+    return $this->connection_class;
   }
 
   /**
@@ -2677,12 +2678,26 @@ class SearchApiSolrService extends SearchApiAbstractService {
    *   The prefixed machine name.
    */
   protected function getIndexId($machine_name) {
+
     // Prepend per-index prefix.
     $id = variable_get('search_api_solr_index_prefix_' . $machine_name, '') . $machine_name;
     // Prepend environment prefix.
     $id = variable_get('search_api_solr_index_prefix', '') . $id;
     return $id;
   }
+
+
+/*
+
+machine name is spaghetti
+
+var = search_api_solr_index_prefix_spaghetti = ""
+id = search_api_solr_index_prefix_spaghettispaghetti
+
+
+*/
+
+
 
   /**
    * Retrieves the effective fulltext fields from the query.

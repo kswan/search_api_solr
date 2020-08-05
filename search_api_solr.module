@@ -403,3 +403,27 @@ function _search_api_solr_switch_to_site_hash(array $form, array &$form_state) {
   $server->save();
   drupal_set_message(t('The Solr server was successfully switched to multi-site compatibility mode.'));
 }
+
+
+/**
+ *
+ * function to set a config setting
+ *
+ */
+function setConfigIndexPrefix($string) {
+
+}
+
+/**
+ * Implements hook_autoload_info().
+ */
+function search_api_solr_autoload_info() {
+  return array(
+      'SearchApiSolrDocument' => 'includes/document.inc',
+      'SearchApiSolrService' => 'includes/service.inc',
+      'SearchApiSolrConnection' => 'includes/solr_connection.inc',
+      'SearchApiSolrConnectionInterface' => 'includes/solr_connection.interface.inc',
+      'SearchApiSolrField' => 'includes/solr_field.inc',
+      'SearchApiSpellcheckSolr' => 'includes/spellcheck.inc',
+  );
+}
