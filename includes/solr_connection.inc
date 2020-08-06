@@ -572,10 +572,10 @@ class SearchApiSolrConnection implements SearchApiSolrConnectionInterface {
    *   The URL to which the request should be sent.
    * @param array $options
    *   Additional options for the request, as recognized by
-   *   drupal_http_request().
+   *   backdrop_http_request().
    *
    * @return object
-   *   The HTTP response, as returned by drupal_http_request().
+   *   The HTTP response, as returned by backdrop_http_request().
    *
    * @throws SearchApiException
    *   If an error occurs, either during sending or on the server side.
@@ -594,10 +594,10 @@ class SearchApiSolrConnection implements SearchApiSolrConnectionInterface {
    *   The URL to which the request should be sent.
    * @param array $options
    *   Additional options for the request, as recognized by
-   *   drupal_http_request().
+   *   backdrop_http_request().
    *
    * @return object
-   *   The HTTP response, as returned by drupal_http_request().
+   *   The HTTP response, as returned by backdrop_http_request().
    *
    * @throws SearchApiException
    *   If an error occurs, either during sending or on the server side.
@@ -616,16 +616,16 @@ class SearchApiSolrConnection implements SearchApiSolrConnectionInterface {
   /**
    * Sends an HTTP request to Solr.
    *
-   * This is just a wrapper around drupal_http_request().
+   * This is just a wrapper around backdrop_http_request().
    *
    * @param string $url
    *   The URL to which the request should be sent.
    * @param array $options
    *   Additional options for the request, as recognized by
-   *   drupal_http_request().
+   *   backdrop_http_request().
    *
    * @return object
-   *   The HTTP response, as returned by drupal_http_request().
+   *   The HTTP response, as returned by backdrop_http_request().
    */
   protected function makeHttpRequest($url, array $options = array()) {
     if (empty($options['method']) || $options['method'] == 'GET' || $options['method'] == 'HEAD') {
@@ -639,7 +639,7 @@ class SearchApiSolrConnection implements SearchApiSolrConnectionInterface {
       $options['context'] = $this->stream_context;
     }
 
-    $result = drupal_http_request($url, $options);
+    $result = backdrop_http_request($url, $options);
 
     $result->status_message = isset($result->status_message) ? $result->status_message : '';
     if (!isset($result->code) || $result->code < 0) {
@@ -880,7 +880,7 @@ class SearchApiSolrConnection implements SearchApiSolrConnectionInterface {
   /**
    * Generates an URL-encoded query string.
    *
-   * Works like PHP's built in http_build_query() (or drupal_http_build_query())
+   * Works like PHP's built in http_build_query() (or backdrop_http_build_query())
    * but uses rawurlencode() and no [] for repeated params, to be compatible
    * with the Java-based servers Solr runs on.
    *

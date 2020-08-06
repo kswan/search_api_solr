@@ -6,7 +6,7 @@
 function search_api_solr_schema() {
   // See, e.g., block_schema() for this trick. Seems to be the best way to get a
   // cache table definition.
-  $schema['cache_search_api_solr'] = drupal_get_schema_unprocessed('system', 'cache');
+  $schema['cache_search_api_solr'] = backdrop_get_schema_unprocessed('system', 'cache');
   $schema['cache_search_api_solr']['description'] = 'Cache table for the Search API Solr module to store various data related to Solr servers.';
   return $schema;
 }
@@ -113,7 +113,7 @@ function search_api_solr_update_7101() {
  */
 function search_api_solr_update_7102() {
   if (!db_table_exists('cache_search_api_solr')) {
-    $table = drupal_get_schema_unprocessed('system', 'cache');
+    $table = backdrop_get_schema_unprocessed('system', 'cache');
     $table['description'] = 'Cache table for the Search API Solr module to store various data related to Solr servers.';
     db_create_table('cache_search_api_solr', $table);
   }

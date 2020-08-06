@@ -97,7 +97,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
         $variables['@url'] = url('help/search_api_solr/README.txt');
       }
       else {
-        $variables['@url'] = url(drupal_get_path('module', 'search_api_solr') . '/README.txt');
+        $variables['@url'] = url(backdrop_get_path('module', 'search_api_solr') . '/README.txt');
       }
       $description = t('Change Solr field names to be more compatible with advanced features. Doing this leads to re-indexing of all indexes on this server. See <a href="@url">README.txt</a> for details.', $variables);
       $form['clean_ids_form'] = array(
@@ -260,7 +260,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
     $form['advanced']['log_response'] = array(
       '#type' => 'checkbox',
       '#title' => t('Log search results'),
-      '#description' => t('Log all search result responses received from Solr. NOTE: This may slow down your site since all response data (including possible retrieved data) will be saved in the Drupal log.'),
+      '#description' => t('Log all search result responses received from Solr. NOTE: This may slow down your site since all response data (including possible retrieved data) will be saved in the Backdrop log.'),
       '#default_value' => $options['log_response'],
     );
     $form['advanced']['commits_disabled'] = array(
@@ -334,7 +334,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
    */
   public function supportsFeature($feature) {
     // First, check the features we always support.
-    $supported = drupal_map_assoc(array(
+    $supported = backdrop_map_assoc(array(
       'search_api_autocomplete',
       'search_api_between',
       'search_api_facets',
@@ -450,13 +450,13 @@ class SearchApiSolrService extends SearchApiAbstractService {
             $status = 'ok';
             if (empty($this->options['skip_schema_check'])) {
               if (substr($stats_summary['@schema_version'], 0, 10) == 'search-api') {
-                drupal_set_message(t('Your schema.xml version is too old. Please replace all configuration files with the ones packaged with this module and re-index you data.'), 'error');
+                backdrop_set_message(t('Your schema.xml version is too old. Please replace all configuration files with the ones packaged with this module and re-index you data.'), 'error');
                 $status = 'error';
               }
               elseif (substr($stats_summary['@schema_version'], 0, 9) != 'drupal-4.') {
                 $variables['@url'] = url('https://www.drupal.org/node/1999310');
                 $message = t('You are using an incompatible schema.xml configuration file. Please follow the instructions in <a href="@url">the handbook</a> for setting up Solr.', $variables);
-                drupal_set_message($message, 'error');
+                backdrop_set_message($message, 'error');
                 $status = 'error';
               }
             }
@@ -622,7 +622,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
     }
 
     // Let other modules alter documents before sending them to solr.
-    drupal_alter('search_api_solr_documents', $documents, $index, $items);
+    backdrop_alter('search_api_solr_documents', $documents, $index, $items);
     $this->alterSolrDocuments($documents, $index, $items);
 
     if (!$documents) {
@@ -713,7 +713,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
       }
 
       // Let modules adjust the field mappings.
-      drupal_alter('search_api_solr_field_mapping', $index, $ret);
+      backdrop_alter('search_api_solr_field_mapping', $index, $ret);
 
       $this->fieldNames[$index->machine_name] = $ret;
     }
@@ -1206,7 +1206,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
     try {
       // Send search request.
       $time_processing_done = microtime(TRUE);
-      drupal_alter('search_api_solr_query', $call_args, $query);
+      backdrop_alter('search_api_solr_query', $call_args, $query);
       $this->preQuery($call_args, $query);
 
       $response = $this->solr->search($keys, $params, $http_method);
@@ -1225,7 +1225,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
         $results['search_api_facets'] = $facets;
       }
 
-      drupal_alter('search_api_solr_search_results', $results, $query, $response);
+      backdrop_alter('search_api_solr_search_results', $results, $query, $response);
       $this->postQuery($results, $query, $response);
 
       // Compute performance.
@@ -1398,7 +1398,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
     // field values, if requested.
     $excerpt_parts = array();
     $field_mapping = array_flip($field_mapping);
-    $fulltext_fields = drupal_map_assoc($fulltext_fields);
+    $fulltext_fields = backdrop_map_assoc($fulltext_fields);
     foreach ($highlighting as $solr_property => $values) {
       $values = (array) $values;
       if (empty($field_mapping[$solr_property])) {
@@ -1452,7 +1452,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
         $value = strip_tags($value);
         foreach ($this->extractHighlightingSnippets($value) as $snippet) {
           $excerpt[] = $snippet;
-          $excerpt_length += drupal_strlen($snippet);
+          $excerpt_length += backdrop_strlen($snippet);
           // Restrict ourselves to three snippets or 300 characters.
           if (count($excerpt) >= 3 || $excerpt_length >= 300) {
             break 2;
@@ -1529,7 +1529,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
 
       // If there is less than 60 characters between them, we want to fuse two
       // snippets.
-      if ($snippet && drupal_strlen($part) < 60) {
+      if ($snippet && backdrop_strlen($part) < 60) {
         $snippet .= $part;
         continue;
       }
@@ -1543,7 +1543,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
         }
         $snippet .= ' ' . substr($part, 0, $space);
 
-        $combined_length += drupal_strlen($snippet);
+        $combined_length += backdrop_strlen($snippet);
         $snippets[] = $this->sanitizeAndFormatExcerptSnippet($snippet);
         $snippet = '';
 
@@ -1561,7 +1561,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
       }
 
       // Otherwise, prepare a new prefix for the next match.
-      $length = drupal_strlen($part);
+      $length = backdrop_strlen($part);
       if ($length > 30) {
         $space = strrpos(substr($part, 0, -25), ' ');
         // Fall back to just cutting at an arbitrary position, space or no.
@@ -2064,7 +2064,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
     // Reset request handler
     $this->request_handler = NULL;
     // Turn inputs to lower case, otherwise we get case sensivity problems.
-    $incomp = drupal_strtolower($incomplete_key);
+    $incomp = backdrop_strtolower($incomplete_key);
 
     $index = $query->getIndex();
     $fields = $this->getFieldNames($index);
@@ -2091,7 +2091,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
       $keys = $this->flattenKeys($query->getKeys());
     }
     else {
-      $keys_array = drupal_map_assoc(preg_split('/[-\s():{}\[\]\\\\"]+/', $keys, -1, PREG_SPLIT_NO_EMPTY));
+      $keys_array = backdrop_map_assoc(preg_split('/[-\s():{}\[\]\\\\"]+/', $keys, -1, PREG_SPLIT_NO_EMPTY));
     }
     if (!$keys) {
       $keys = NULL;
@@ -2158,7 +2158,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
       try {
         // Send search request
         $this->connect();
-        drupal_alter('search_api_solr_query', $call_args, $query);
+        backdrop_alter('search_api_solr_query', $call_args, $query);
         $this->preQuery($call_args, $query);
         $response = $this->solr->search($keys, $params, $http_method);
 
@@ -2225,7 +2225,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
             // Build suggestions using returned facets
             $incomp_length = strlen($incomp);
             foreach ($matches as $term => $count) {
-              if (drupal_strtolower(substr($term, 0, $incomp_length)) == $incomp) {
+              if (backdrop_strtolower(substr($term, 0, $incomp_length)) == $incomp) {
                 $suggestions[] = array(
                   'suggestion_suffix' => substr($term, $incomp_length),
                   'term' => $term,
@@ -2255,7 +2255,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
       $keys = trim($keys . ' ' . $incomplete_key);
     }
 
-    drupal_alter('search_api_solr_autocomplete_suggestions', $suggestions, $alter_data);
+    backdrop_alter('search_api_solr_autocomplete_suggestions', $suggestions, $alter_data);
 
     return $suggestions;
   }
@@ -2396,7 +2396,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
       'params'      => &$params,
       'http_method' => &$http_method,
     );
-    drupal_alter('search_api_solr_multi_query', $call_args, $query);
+    backdrop_alter('search_api_solr_multi_query', $call_args, $query);
 
     $response = $this->solr->search($keys, $params, $http_method);
     $time_query_done = microtime(TRUE);
@@ -2529,7 +2529,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
       }
     }
 
-    drupal_alter('search_api_solr_multi_search_results', $results, $query, $response);
+    backdrop_alter('search_api_solr_multi_search_results', $results, $query, $response);
 
     // Compute performance
     $time_end = microtime(TRUE);
@@ -2585,7 +2585,7 @@ class SearchApiSolrService extends SearchApiAbstractService {
   public function scheduleCommit() {
     if (!$this->commitScheduled) {
       $this->commitScheduled = TRUE;
-      drupal_register_shutdown_function(array($this, 'commit'));
+      backdrop_register_shutdown_function(array($this, 'commit'));
     }
   }
 

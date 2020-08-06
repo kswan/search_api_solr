@@ -124,7 +124,7 @@ interface SearchApiSolrConnectionInterface {
    * @param array $params
    *   Any request parameters when constructing the URL.
    * @param array $options
-   *  Options to be passed to drupal_http_request().
+   *  Options to be passed to backdrop_http_request().
    *
    * @return object
    *  The HTTP response object.

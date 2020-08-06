@@ -106,8 +106,8 @@ Hidden variables
   providing your own ratio. Use 1 or greater to use all suggestions.
 - search_api_solr_index_prefix (default: '')
   By default, the index ID in the Solr server is the same as the index's machine
-  name in Drupal. This setting will let you specify a prefix for the index IDs
-  on this Drupal installation. Only use alphanumeric characters and underscores.
+  name in Backdrop. This setting will let you specify a prefix for the index IDs
+  on this Backdrop installation. Only use alphanumeric characters and underscores.
   Since changing the prefix makes the currently indexed data inaccessible, you
   should change this vairable only when no indexes are currently on any Solr
   servers.

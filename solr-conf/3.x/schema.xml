@@ -415,7 +415,7 @@
     <!-- Apache Solr Search Integration specific fields -->
     <!-- entity_id is the numeric object ID, e.g. Node ID, File ID -->
     <field name="entity_id"  type="long" indexed="true" stored="true" />
-    <!-- entity_type is 'node', 'file', 'user', or some other Drupal object type -->
+    <!-- entity_type is 'node', 'file', 'user', or some other Backdrop object type -->
     <field name="entity_type" type="string" indexed="true" stored="true" />
     <!-- bundle is a node type, or as appropriate for other entity types -->
     <field name="bundle" type="string" indexed="true" stored="true"/>
@@ -434,7 +434,7 @@
     <field name="path" type="string" indexed="true" stored="true"/>
     <field name="path_alias" type="text" indexed="true" stored="true" termVectors="true" omitNorms="true"/>
 
-    <!-- These are the fields that correspond to a Drupal node. The beauty of having
+    <!-- These are the fields that correspond to a Backdrop node. The beauty of having
       Lucene store title, body, type, etc., is that we retrieve them with the search
       result set and don't need to go to the database with a node_load. -->
     <field name="tid"  type="long" indexed="true" stored="true" multiValued="true"/>
