@@ -2666,9 +2666,8 @@ class SearchApiSolrService extends SearchApiAbstractService {
   /**
    * Prefixes an index ID as configured.
    *
-   * The resulting ID will be a concatenation of the following strings:
+   * The resulting ID will be a concatenation of the following string:
    * - If set, the "search_api_solr_index_prefix" variable.
-   * - If set, the index-specific "search_api_solr_index_prefix_INDEX" variable.
    * - The index's machine name.
    *
    * @param string $machine_name
@@ -2678,11 +2677,9 @@ class SearchApiSolrService extends SearchApiAbstractService {
    *   The prefixed machine name.
    */
   protected function getIndexId($machine_name) {
-
-    // Prepend per-index prefix.
-    $id = config_get('search_api_solr_index_prefix_' . $machine_name, '') . $machine_name;
     // Prepend environment prefix.
-    $id = config_get('search_api_solr_index_prefix', '') . $id;
+    $id = config_get('search_api_solr.settings', 'search_api_solr_index_prefix') . $machine_name;
+
     return $id;
   }
 

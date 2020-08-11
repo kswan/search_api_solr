@@ -113,13 +113,6 @@ Hidden variables
   should change this vairable only when no indexes are currently on any Solr
   servers.
 
-- search_api_solr_index_prefix_INDEX_ID (default: '')
-  Same as above, but a per-index prefix. Use the index's machine name as
-  INDEX_ID in the variable name. Per-index prefixing is done before the global
-  prefix is added, so the global prefix will come first in the final name:
-  (GLOBAL_PREFIX)(INDEX_PREFIX)(INDEX_ID)
-  The same rules as above apply for setting the prefix.
-
 - search_api_solr_http_get_max_length (default: 4000)
   The maximum number of bytes that can be handled as an HTTP GET query when
   HTTP method is AUTO. Typically Solr can handle up to 65355 bytes, but Tomcat
@@ -152,7 +145,7 @@ Hidden variables
   Since the prefix of fields is used to determine the field type (by default),
   this lets you enable highlighting for other field types. By default,
   highlighting will be possible for all fulltext fields.
-	
+
 - search_api_solr_connection_class (default: "SearchApiSolrConnection")
   The connection class to use for connecting to Solr. Needs to implement
   SearchApiSolrConnectionInterface.
