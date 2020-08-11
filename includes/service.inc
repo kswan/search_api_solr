@@ -2680,24 +2680,11 @@ class SearchApiSolrService extends SearchApiAbstractService {
   protected function getIndexId($machine_name) {
 
     // Prepend per-index prefix.
-    $id = variable_get('search_api_solr_index_prefix_' . $machine_name, '') . $machine_name;
+    $id = config_get('search_api_solr_index_prefix_' . $machine_name, '') . $machine_name;
     // Prepend environment prefix.
-    $id = variable_get('search_api_solr_index_prefix', '') . $id;
+    $id = config_get('search_api_solr_index_prefix', '') . $id;
     return $id;
   }
-
-
-/*
-
-machine name is spaghetti
-
-var = search_api_solr_index_prefix_spaghetti = ""
-id = search_api_solr_index_prefix_spaghettispaghetti
-
-
-*/
-
-
 
   /**
    * Retrieves the effective fulltext fields from the query.

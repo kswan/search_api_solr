@@ -88,9 +88,9 @@ function search_api_solr_update_7101() {
       $server->deleteItems('all');
     }
     else {
-      $tasks = variable_get('search_api_tasks', array());
+      $tasks = array();
       $tasks[$server->machine_name][''] = array('clear all');
-      variable_set('search_api_tasks', $tasks);
+      config_set('search_api_solr.settings', 'search_api_tasks', $tasks);
     }
     $query = db_select('search_api_index', 'i')
       ->fields('i', array('machine_name'))

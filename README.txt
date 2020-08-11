@@ -104,6 +104,7 @@ Hidden variables
   By default, keywords that occur in more than 90% of results are ignored for
   autocomplete suggestions. This setting lets you modify that behaviour by
   providing your own ratio. Use 1 or greater to use all suggestions.
+
 - search_api_solr_index_prefix (default: '')
   By default, the index ID in the Solr server is the same as the index's machine
   name in Backdrop. This setting will let you specify a prefix for the index IDs
@@ -111,38 +112,47 @@ Hidden variables
   Since changing the prefix makes the currently indexed data inaccessible, you
   should change this vairable only when no indexes are currently on any Solr
   servers.
+
 - search_api_solr_index_prefix_INDEX_ID (default: '')
   Same as above, but a per-index prefix. Use the index's machine name as
   INDEX_ID in the variable name. Per-index prefixing is done before the global
   prefix is added, so the global prefix will come first in the final name:
   (GLOBAL_PREFIX)(INDEX_PREFIX)(INDEX_ID)
   The same rules as above apply for setting the prefix.
+
 - search_api_solr_http_get_max_length (default: 4000)
   The maximum number of bytes that can be handled as an HTTP GET query when
   HTTP method is AUTO. Typically Solr can handle up to 65355 bytes, but Tomcat
   and Jetty will error at slightly less than 4096 bytes.
+
 - search_api_solr_cron_action (default: "spellcheck")
   The Search API Solr Search module can automatically execute some upkeep
   operations daily during cron runs. This variable determines what particular
   operation is carried out.
+
   - spellcheck: The "default" spellcheck dictionary used by Solr will be rebuilt
   so that spellchecking reflects the latest index state.
+
   - optimize: An "optimize" operation [8] is executed on the Solr server. As a
   result of this, all spellcheck dictionaries (that have "buildOnOptimize" set
   to "true") will be rebuilt, too.
+
   - none: No action is executed.
   If an unknown setting is encountered, it is interpreted as "none".
+
 - search_api_solr_site_hash (default: random)
   A unique hash specific to the local site, created the first time it is needed.
   Only change this if you want to display another server's results and you know
   what you are doing. Old indexed items will be lost when the hash is changed
   and all items will have to be reindexed. Can only contain alphanumeric
   characters.
+
 - search_api_solr_highlight_prefix (default: "tm_")
   The prefix of Solr fields for which field-level highlighting will be enabled.
   Since the prefix of fields is used to determine the field type (by default),
   this lets you enable highlighting for other field types. By default,
   highlighting will be possible for all fulltext fields.
+	
 - search_api_solr_connection_class (default: "SearchApiSolrConnection")
   The connection class to use for connecting to Solr. Needs to implement
   SearchApiSolrConnectionInterface.
