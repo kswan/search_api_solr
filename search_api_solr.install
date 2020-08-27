@@ -59,13 +59,16 @@ function search_api_solr_requirements($phase) {
  * Implements hook_uninstall().
  */
 function search_api_solr_uninstall() {
-  variable_del('search_api_solr_last_optimize');
-  variable_del('search_api_solr_autocomplete_max_occurrences');
-  variable_del('search_api_solr_index_prefix');
-  variable_del('search_api_solr_http_get_max_length');
-  variable_del('search_api_solr_cron_action');
-  variable_del('search_api_solr_site_hash');
-  variable_del('search_api_solr_connection_class');
+  config_del('search_api_solr.settings', 'search_api_solr_last_optimize');
+  config_del('search_api_solr.settings', 'search_api_solr_autocomplete_max_occurrences');
+  config_del('search_api_solr.settings', 'search_api_solr_index_prefix');
+  config_del('search_api_solr.settings', 'search_api_solr_http_get_max_length');
+  config_del('search_api_solr.settings', 'search_api_solr_cron_action');
+  config_del('search_api_solr.settings', 'search_api_solr_site_hash');
+  config_del('search_api_solr.settings', 'search_api_solr_connection_class');
+  config_del('search_api_solr.settings', 'search_api_solr_tasks');
+  config_del('search_api_solr.settings', 'search_api_solr_last_optimize');
+  config_del('search_api_solr.settings', 'search_api_solr_highlight_prefix');
 }
 
 /**
@@ -79,42 +82,8 @@ function search_api_solr_update_dependencies() {
   return $dependencies;
 }
 
-/**
- * Implements transition from using the index IDs to using machine names.
- */
-function search_api_solr_update_7101() {
-  foreach (search_api_server_load_multiple(FALSE, array('class' => 'search_api_solr_service')) as $server) {
-    if ($server->enabled) {
-      $server->deleteItems('all');
-    }
-    else {
-      $tasks = array();
-      $tasks[$server->machine_name][''] = array('clear all');
-      config_set('search_api_solr.settings', 'search_api_solr_tasks', $tasks);
-    }
-    $query = db_select('search_api_index', 'i')
-      ->fields('i', array('machine_name'))
-      ->condition('server', $server->machine_name);
-    db_update('search_api_item')
-      ->fields(array(
-        'changed' => REQUEST_TIME,
-      ))
-      ->condition('index_id', $query, 'IN')
-      ->execute();
-  }
+// TODO The old hook_update_N functions cannot be applied to Backdrop.
+function search_api_solr_update_7101() { }
 
-  return t('The Solr search module was updated. ' .
-      'Please stop your Solr servers, replace their schema.xml with the new version and then start them again. ' .
-      'All data indexed on Solr servers will have to be reindexed.');
-}
-
-/**
- * Create the Search API Solr cache table {cache_search_api_solr}.
- */
-function search_api_solr_update_7102() {
-  if (!db_table_exists('cache_search_api_solr')) {
-    $table = backdrop_get_schema_unprocessed('system', 'cache');
-    $table['description'] = 'Cache table for the Search API Solr module to store various data related to Solr servers.';
-    db_create_table('cache_search_api_solr', $table);
-  }
-}
+// TODO The old hook_update_N functions cannot be applied to Backdrop.
+function search_api_solr_update_7102() { }
