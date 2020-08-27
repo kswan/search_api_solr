@@ -1,6 +1,7 @@
 type = module
 name = Solr search
 description = Offers an implementation of the Search API that uses an Apache Solr server for indexing content.
+dependencies[] = entity:entity
 dependencies[] = search_api
 package = Search
 backdrop = 1.x
