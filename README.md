@@ -7,6 +7,25 @@ instructions for setting up Solr in the module's handbook [1].
 
 [1] https://www.drupal.org/node/1999280
 
+Installation
+------------
+
+- Install this module using the official Backdrop CMS instructions at
+  https://backdropcms.org/guide/modules.
+
+- As the only pre-requisite you will need the Search API [1] module enabled and
+correctly set up, as well as the Entity Plus [2] module enabled.
+
+[1] https://github.com/backdrop-contrib/search_api
+[2] https://github.com/backdrop-contrib/entity_plus
+
+Documentation
+-------------
+
+Additional documentation is located here:
+https://www.drupal.org/node/1999280
+
+
 Supported optional features
 ---------------------------
 
@@ -31,13 +50,16 @@ Regarding third-party features, the following are supported:
   Introduced by module: search_api_autocomplete
   Lets you add autocompletion capabilities to search forms on the site. (See
   also "Hidden variables" below for Solr-specific customization.)
+
 - search_api_facets
   Introduced by module: search_api_facetapi
   Allows you to create facetted searches for dynamically filtering search
   results.
+
 - search_api_facets_operator_or
   Introduced by module: search_api_facetapi
   Allows the creation of OR facets.
+
 - search_api_mlt
   Introduced by module: search_api_views
   Lets you display items that are similar to a given one. Use, e.g., to create
@@ -47,31 +69,31 @@ Regarding third-party features, the following are supported:
   you can index the fields (or copies of them) as string values. See [4] for
   details.
   Also, MLT with date fields isn't currently supported at all for any version.
+
 - search_api_multi
   Introduced by module: search_api_multi
   Allows you to search multiple indexes at once, as long as they are on the same
   server. You can use this to let users simultaneously search all content on the
   site – nodes, comments, user profiles, etc.
+
 - search_api_spellcheck
   Introduced by module: search_api_spellcheck
   Gives the option to display automatic spellchecking for searches.
+
 - search_api_data_type_location
   Introduced by module: search_api_location
   Lets you index, filter and sort on location fields. Note, however, that only
   single-valued fields are currently supported for Solr 3.x.
+
 - search_api_grouping
   Introduced by module: search_api_grouping [5]
   Lets you group search results based on indexed fields. For further information
   see the FieldCollapsing documentation in the solr wiki [6].
 
-If you feel some service option is missing, or have other ideas for improving
-this implementation, please file a feature request in the project's issue queue,
-at [7].
-
 [4] https://drupal.org/node/2004596
 [5] https://drupal.org/sandbox/daspeter/1783280
 [6] http://wiki.apache.org/solr/FieldCollapsing
-[7] https://drupal.org/project/issues/search_api_solr
+
 
 Specifics
 ---------
