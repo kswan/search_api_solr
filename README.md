@@ -203,3 +203,23 @@ Solr, which should be used instead of the default "facet.field" parameter. The
 facet queries will automatically have "FIELD:" prepended to them. The returned
 facets will have an additional "solr_facet_query" key in addition to "filter"
 and "count", to spot them more easily.
+
+- Bugs and Feature requests should be reported in the Issue Queue:
+https://github.com/backdrop-contrib/search_api_solr/issues.
+
+Current Maintainers
+-------------------
+
+- [Ray Burgess](https://github.com/earlyburg).
+
+Credits
+-------
+
+- Ported to Backdrop CMS by [Ray Burgess](https://github.com/earlyburg).
+- Originally written for Drupal by [Thomas Seidl](https://www.drupal.org/u/drunken-monkey).
+
+License
+-------
+
+This project is GPL v2 software.
+See the LICENSE.txt file in this directory for complete text.
