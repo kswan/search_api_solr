@@ -1,7 +1,7 @@
 Solr search
 -----------
 
-This module provides an implementation of the Search API which uses an Apache
+- This module provides an implementation of the Search API which uses an Apache
 Solr search server for indexing and searching. You can find detailed
 instructions for setting up Solr in the module's handbook [1].
 
@@ -22,20 +22,20 @@ correctly set up, as well as the Entity Plus [2] module enabled.
 Documentation
 -------------
 
-Additional documentation is located here:
+- Additional documentation is located here:
 https://www.drupal.org/node/1999280
 
 
 Supported optional features
 ---------------------------
 
-All Search API datatypes are supported by using appropriate Solr datatypes for
+- All Search API datatypes are supported by using appropriate Solr datatypes for
 indexing them. By default, "String"/"URI" and "Integer"/"Duration" are defined
 equivalently. However, through manual configuration of the used schema.xml this
 can be changed arbitrarily. Using your own Solr extensions is thereby also
 possible.
 
-The "direct" parse mode for queries will result in the keys being directly used
+- The "direct" parse mode for queries will result in the keys being directly used
 as the query to Solr. For details about Lucene's query syntax, see [2]. There
 are also some Solr additions to this, listed at [3]. Note however that, by
 default, this module uses the dismax query handler, so searches like
@@ -145,14 +145,14 @@ Hidden variables
   operations daily during cron runs. This variable determines what particular
   operation is carried out.
 
-  - spellcheck: The "default" spellcheck dictionary used by Solr will be rebuilt
+- spellcheck: The "default" spellcheck dictionary used by Solr will be rebuilt
   so that spellchecking reflects the latest index state.
 
-  - optimize: An "optimize" operation [8] is executed on the Solr server. As a
+- optimize: An "optimize" operation [8] is executed on the Solr server. As a
   result of this, all spellcheck dictionaries (that have "buildOnOptimize" set
   to "true") will be rebuilt, too.
 
-  - none: No action is executed.
+- none: No action is executed.
   If an unknown setting is encountered, it is interpreted as "none".
 
 - search_api_solr_site_hash (default: random)

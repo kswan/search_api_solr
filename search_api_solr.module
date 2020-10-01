@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * Provides a Solr-based service class for the Search API.
@@ -137,7 +136,8 @@ function search_api_solr_search_api_server_update(SearchApiServer $server) {
 function search_api_solr_views_api() {
   if (module_exists('search_api_views')) {
     return array(
-      'api' => 3,
+      'api' => '3.0',
+      'path' => backdrop_get_path('module', 'search_api_solr') . '/views',
     );
   }
 }
