@@ -137,7 +137,7 @@ function search_api_solr_views_api() {
   if (module_exists('search_api_views')) {
     return array(
       'api' => '3.0',
-      'path' => backdrop_get_path('module', 'search_api_solr') . '/views',
+      'path' => backdrop_get_path('module', 'search_api_views') . '/views',
     );
   }
 }
