@@ -59,16 +59,16 @@ function search_api_solr_requirements($phase) {
  * Implements hook_uninstall().
  */
 function search_api_solr_uninstall() {
-  config_del('search_api_solr.settings', 'search_api_solr_last_optimize');
-  config_del('search_api_solr.settings', 'search_api_solr_autocomplete_max_occurrences');
-  config_del('search_api_solr.settings', 'search_api_solr_index_prefix');
-  config_del('search_api_solr.settings', 'search_api_solr_http_get_max_length');
-  config_del('search_api_solr.settings', 'search_api_solr_cron_action');
-  config_del('search_api_solr.settings', 'search_api_solr_site_hash');
-  config_del('search_api_solr.settings', 'search_api_solr_connection_class');
-  config_del('search_api_solr.settings', 'search_api_solr_tasks');
-  config_del('search_api_solr.settings', 'search_api_solr_last_optimize');
-  config_del('search_api_solr.settings', 'search_api_solr_highlight_prefix');
+  config_clear('search_api_solr.settings', 'search_api_solr_last_optimize');
+  config_clear('search_api_solr.settings', 'search_api_solr_autocomplete_max_occurrences');
+  config_clear('search_api_solr.settings', 'search_api_solr_index_prefix');
+  config_clear('search_api_solr.settings', 'search_api_solr_http_get_max_length');
+  config_clear('search_api_solr.settings', 'search_api_solr_cron_action');
+  config_clear('search_api_solr.settings', 'search_api_solr_site_hash');
+  config_clear('search_api_solr.settings', 'search_api_solr_connection_class');
+  config_clear('search_api_solr.settings', 'search_api_solr_tasks');
+  config_clear('search_api_solr.settings', 'search_api_solr_last_optimize');
+  config_clear('search_api_solr.settings', 'search_api_solr_highlight_prefix');
 }
 
 /**
