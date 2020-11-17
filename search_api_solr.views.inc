@@ -57,7 +57,7 @@ function search_api_solr_views_data_alter(array &$data) {
         if (empty($normal_fields[$key])) {
           $info = $property->info();
           if ($info) {
-            entity_views_field_definition($key, $info, $table);
+            entity_plus_views_field_definition($key, $info, $table);
           }
         }
       }
