@@ -1,0 +1,9 @@
+name = Search API Solr Test
+description = "Some dummy implementations for testing Search API Solr."
+backdrop = 1.x
+type = module
+package = Search
+
+dependencies[] = search_api_solr:search_api_solr
+
+hidden = TRUE
