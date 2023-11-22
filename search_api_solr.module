@@ -5,6 +5,17 @@
  */
 
 /**
+ * Implements hook_config_info().
+ */
+function search_api_solr_config_info() {
+  $prefixes['search_api_solr.settings'] = array(
+    'label' => t('Search API SOLR settings'),
+    'group' => t('Configuration'),
+  );
+  return $prefixes;
+}
+
+/**
  * Implements hook_menu().
  */
 function search_api_solr_menu() {
@@ -79,8 +90,8 @@ function search_api_solr_cron() {
   // 86400 seconds is one day. We use slightly less here to allow for some
   // variation in the request time of the cron run, so that the time of day will
   // (more or less) stay the same.
-  if (REQUEST_TIME - config_get('search_api_solr.settings', 'search_api_solr_last_optimize') > 86340) {
-    config_set('search_api_solr.settings', 'search_api_solr_last_optimize', REQUEST_TIME);
+  if (REQUEST_TIME - state_get('search_api_solr_last_optimize') > 86340) {
+    state_set('search_api_solr_last_optimize', REQUEST_TIME);
     $conditions = array('class' => 'search_api_solr_service', 'enabled' => TRUE);
     $count = 0;
     foreach (search_api_server_load_multiple(FALSE, $conditions) as $server) {
