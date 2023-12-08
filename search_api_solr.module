@@ -245,10 +245,10 @@ function search_api_solr_get_data_type_info($type = NULL) {
  */
 function search_api_solr_site_hash() {
   // Copied from apachesolr_site_hash().
-  if (!($hash = config_get('search_api_solr.settings', 'search_api_solr_site_hash'))) {
+  if (!($hash = state_get('search_api_solr_site_hash', FALSE))) {
     global $base_url;
     $hash = substr(base_convert(sha1(uniqid($base_url, TRUE)), 16, 36), 0, 6);
-    config_set('search_api_solr.settings', 'search_api_solr_site_hash', $hash);
+    state_set('search_api_solr_site_hash', $hash);
   }
   return $hash;
 }

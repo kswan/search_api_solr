@@ -80,7 +80,6 @@ function search_api_solr_update_1000() {
   // Migrate variables to config.
   $config = config('search_api_solr.settings');
   if ($config->isNew()) {
-    $config->set('search_api_solr_site_hash', update_variable_get('search_api_solr_site_hash', ''));
     $config->set('search_api_solr_highlight_prefix', update_variable_get('search_api_solr_highlight_prefix', 'tm_'));
     $config->set('search_api_solr_autocomplete_max_occurrences', update_variable_get('search_api_solr_autocomplete_max_occurrences', '0.9'));
     $config->set('search_api_solr_connection_class', update_variable_get('search_api_solr_connection_class', 'SearchApiSolrConnection'));
