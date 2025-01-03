@@ -1731,27 +1731,28 @@ class SearchApiSolrService extends SearchApiAbstractService {
     $k = array();
     $or = $keys['#conjunction'] == 'OR';
     $neg = !empty($keys['#negation']);
-    foreach (element_children($keys) as $i) {
-      $key = $keys[$i];
-      if (!$key) {
-        continue;
-      }
-      if (is_array($key)) {
-        $subkeys = $this->flattenKeys($key);
-        if ($subkeys) {
-          $nested_expressions = TRUE;
-          // If this is a negated OR expression, we can't just use nested keys
-          // as-is, but have to put them into parantheses.
-          if ($or && $neg) {
-            $subkeys = "($subkeys)";
-          }
-          $k[] = $subkeys;
+    foreach ($keys as $key => $value) {
+      if ($key === '' || substr($key, 0, 1) !== '#') {
+        if (!$value) {
+          continue;
         }
-      }
-      else {
-        $key = trim($key);
-        $key = call_user_func(array($this->getConnectionClass(), 'phrase'), $key);
-        $k[] = $key;
+        if (is_array($value)) {
+          $subkeys = $this->flattenKeys($value);
+          if ($subkeys) {
+            $nested_expressions = TRUE;
+            // If this is a negated OR expression, we can't just use nested keys
+            // as-is, but have to put them into parantheses.
+            if ($or && $neg) {
+              $subkeys = "($subkeys)";
+            }
+            $k[] = $subkeys;
+          }
+        }
+        else {
+          $value = trim($value);
+          $value = call_user_func(array($this->getConnectionClass(), 'phrase'), $value);
+          $k[] = $value;
+        }
       }
     }
     if (!$k) {
